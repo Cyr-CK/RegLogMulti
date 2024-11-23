@@ -111,3 +111,15 @@ imputer$fit_transform(df, names(df))
 ```
 
 
+```{r}
+df <- data.frame(
+  weight = c(80, 50, 75, 70),
+  height = c(180, 160, 160, 175)
+)
+
+# scaler <- StandardScaler$new()
+scaler <- Normalizer$new()
+
+scaler$fit_transform(df)
+```
+

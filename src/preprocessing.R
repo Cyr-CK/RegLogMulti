@@ -169,4 +169,59 @@ SimpleQualiImputer <- R6Class("SimpleQualiImputer",
                        )
 )
 
+# StandardScaler
+StandardScaler <- R6Class("StandardScaler",
+                  public = list(
+                      mean = NULL,
+                      std = NULL,
+                      
+                      fit = function(data) {
+                          self$mean <- apply(data,2, mean, na.rm = TRUE)
+                          self$std <- apply(data, 2, sd, na.rm = TRUE)
+                          invisible(self)
+                      },
+                      
+                      transform = function(data) {
+                          if (is.null(self$mean) || is.null(self$std)) {
+                              stop("Fit the scaler before transforming data")
+                          }
+                          t((t(data) - self$mean) / self$std)
+                      },
+                      
+                      fit_transform = function(data) {
+                          self$fit(data)
+                          self$transform(data)
+                      }
+                  )
+)
+
+
+# Normalization
+
+Normalizer <- R6Class("Normalizer",
+              public = list(
+                  min_vals = NULL,
+                  max_vals = NULL,
+                  
+                  fit = function(data) {
+                      self$min_vals <- apply(data, 2, min)
+                      self$max_vals <- apply(data, 2, max)
+                      invisible(self)
+                  },
+                  
+                  transform = function(data) {
+                      if (is.null(self$min_vals) || is.null(self$max_vals)) {
+                          stop("Fit the normalizer before transforming data")
+                      }
+                      t((t(data) - self$min_vals) / (self$max_vals - self$min_vals))
+                  },
+                  
+                  fit_transform = function(data) {
+                      self$fit(data)
+                      self$transform(data)
+                  }
+              )
+)
+
+
 # IQR Outlier remover
