@@ -2,9 +2,9 @@
 % Please edit documentation in R/standard_scaler.R
 \name{Standard.Scaler}
 \alias{Standard.Scaler}
-\title{Standardization Scaler}
+\title{Standard Scaler}
 \description{
-Class of a Standardization scaler object that has fit, fit_transform and transform methods to standardize quantitative data
+Class of a standardization scaler object that has fit, fit_transform and transform methods to standardize quantitative data.
 }
 \examples{
 scaler <- Standard.Scaler$new()
@@ -14,13 +14,40 @@ X_train_scaled <- scaler$fit_transform(X_train)
 scaler$fit(X_train)
 X_test_scaled <- scaler$transform(X_test)
 
+## ------------------------------------------------
+## Method `Standard.Scaler$new`
+## ------------------------------------------------
+
+# Creates a new instance of the class
+scaler <- Standard.Scaler$new()
+
+## ------------------------------------------------
+## Method `Standard.Scaler$fit`
+## ------------------------------------------------
+
+# Fits the object to a given dataset
+scaler$fit(X_train)
+
+## ------------------------------------------------
+## Method `Standard.Scaler$transform`
+## ------------------------------------------------
+
+# Performs a standardization scaling on a given dataset
+X_test_scaled <- scaler$transform(X_test)
+
+## ------------------------------------------------
+## Method `Standard.Scaler$fit_transform`
+## ------------------------------------------------
+
+# Fitting and standardization scaling on a given dataset
+X_train_scaled <- scaler$fit_transform(X_train)
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{mean}}{Vector of feature means}
+\item{\code{mean}}{Vector of feature means.}
 
-\item{\code{std}}{Vector of feature standard-deviations}
+\item{\code{std}}{Vector of feature standard-deviations.}
 }
 \if{html}{\out{</div>}}
 }
@@ -38,8 +65,21 @@ X_test_scaled <- scaler$transform(X_test)
 \if{html}{\out{<a id="method-Standard.Scaler-new"></a>}}
 \if{latex}{\out{\hypertarget{method-Standard.Scaler-new}{}}}
 \subsection{Method \code{new()}}{
+This method creates a new standard scaler object.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Standard.Scaler$new()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A new standard scaler object.
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{# Creates a new instance of the class
+scaler <- Standard.Scaler$new()
+}
+\if{html}{\out{</div>}}
+
 }
 
 }
@@ -47,8 +87,28 @@ X_test_scaled <- scaler$transform(X_test)
 \if{html}{\out{<a id="method-Standard.Scaler-fit"></a>}}
 \if{latex}{\out{\hypertarget{method-Standard.Scaler-fit}{}}}
 \subsection{Method \code{fit()}}{
+This method fits a standard scaler on a given dataset.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Standard.Scaler$fit(data)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{data}}{A dataframe containing the quantitative data on which the scaler computes the features' mean and standard deviation.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+Nothing. The object is internally updated when using this method.
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{# Fits the object to a given dataset
+scaler$fit(X_train)
+}
+\if{html}{\out{</div>}}
+
 }
 
 }
@@ -56,8 +116,28 @@ X_test_scaled <- scaler$transform(X_test)
 \if{html}{\out{<a id="method-Standard.Scaler-transform"></a>}}
 \if{latex}{\out{\hypertarget{method-Standard.Scaler-transform}{}}}
 \subsection{Method \code{transform()}}{
+This method applies on a given dataset the transformation rules the scaler learned from the dataset it was fit to.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Standard.Scaler$transform(data)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{data}}{A dataframe containing the quantitative data that will get standardization.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A dataframe containing the data after standardization.
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{# Performs a standardization scaling on a given dataset
+X_test_scaled <- scaler$transform(X_test)
+}
+\if{html}{\out{</div>}}
+
 }
 
 }
@@ -65,8 +145,28 @@ X_test_scaled <- scaler$transform(X_test)
 \if{html}{\out{<a id="method-Standard.Scaler-fit_transform"></a>}}
 \if{latex}{\out{\hypertarget{method-Standard.Scaler-fit_transform}{}}}
 \subsection{Method \code{fit_transform()}}{
+This method fits a standard scaler on a given dataset then applies standardization on it.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Standard.Scaler$fit_transform(data)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{data}}{A dataframe containing the quantitative data that will get standardization.}
+}
+\if{html}{\out{</div>}}
+}
+\subsection{Returns}{
+A dataframe containing the data after standardization.
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{# Fitting and standardization scaling on a given dataset
+X_train_scaled <- scaler$fit_transform(X_train)
+}
+\if{html}{\out{</div>}}
+
 }
 
 }

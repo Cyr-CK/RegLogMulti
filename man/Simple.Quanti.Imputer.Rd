@@ -4,7 +4,7 @@
 \alias{Simple.Quanti.Imputer}
 \title{Simple quantitative NA imputer}
 \description{
-Class of a quantitative NA imputer object that has fit, fit_transform and transform methods to impute quantitative missing values with mean or median method
+Class of a quantitative NA imputer object that has fit, fit_transform and transform methods to impute quantitative missing values with mean or median method.
 }
 \examples{
 imputer <- Simple.Quanti.Imputer$new(imputation_type="mean")
@@ -14,13 +14,41 @@ X_train_filled <- imputer$fit_transform(X_train, c("Col_quanti_1","Col_quanti_2"
 
 imputer$fit(X_train, c("Col_quanti_1","Col_quanti_2","Col_quanti_N"))
 X_test_filled <- imputer$transform(X_test)
+
+## ------------------------------------------------
+## Method `Simple.Quanti.Imputer$new`
+## ------------------------------------------------
+
+# Creates a new instance of the class
+imputer <- Simple.Quanti.Imputer$new(imputation_type = "median")
+
+## ------------------------------------------------
+## Method `Simple.Quanti.Imputer$fit`
+## ------------------------------------------------
+
+# Fits the object to a given dataset
+imputer$fit(X_train)
+
+## ------------------------------------------------
+## Method `Simple.Quanti.Imputer$transform`
+## ------------------------------------------------
+
+# Performs a quantitative imputation on a given dataset
+X_test_filled <- imputer$transform(X_test)
+
+## ------------------------------------------------
+## Method `Simple.Quanti.Imputer$fit_transform`
+## ------------------------------------------------
+
+# Fitting and imputing missing values on a given dataset
+X_train_filled <- imputer$fit_transform(X_train)
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{imputation_type}}{Method that will be used to impute NA}
+\item{\code{imputation_type}}{Method that will be used to impute NA.}
 
-\item{\code{imputation_values}}{Values produced by the imputer}
+\item{\code{imputation_values}}{Values produced by the imputer.}
 }
 \if{html}{\out{</div>}}
 }
@@ -38,7 +66,7 @@ X_test_filled <- imputer$transform(X_test)
 \if{html}{\out{<a id="method-Simple.Quanti.Imputer-new"></a>}}
 \if{latex}{\out{\hypertarget{method-Simple.Quanti.Imputer-new}{}}}
 \subsection{Method \code{new()}}{
-Create a new simple quantitative imputer object
+This method creates a new quantitative imputer object.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Simple.Quanti.Imputer$new(imputation_type = "mean")}\if{html}{\out{</div>}}
 }
@@ -46,19 +74,30 @@ Create a new simple quantitative imputer object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{imputation_type}}{Method of NA imputation}
+\item{\code{imputation_type}}{String defining the method of NA imputation.
+When it equals \code{mean}, the object is set to perform an imputation based on the mean, i.e. the average value of the feature.
+When it equals \code{median}, the object is set to perform an imputation based on the median, i.e. the median value of the feature.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A new imputer object
+A new quantitative imputer object.
 }
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{# Creates a new instance of the class
+imputer <- Simple.Quanti.Imputer$new(imputation_type = "median")
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Simple.Quanti.Imputer-fit"></a>}}
 \if{latex}{\out{\hypertarget{method-Simple.Quanti.Imputer-fit}{}}}
 \subsection{Method \code{fit()}}{
-Fit the simple quantitative imputer to data following the specified method
+This method fits a quantitative imputer to data given the specified method.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Simple.Quanti.Imputer$fit(data, columns)}\if{html}{\out{</div>}}
 }
@@ -66,18 +105,30 @@ Fit the simple quantitative imputer to data following the specified method
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{data}}{Dataframe}
+\item{\code{data}}{A dataframe containing the quantitative data on which the imputer learns to fill missing values.}
 
-\item{\code{columns}}{Vector of column names that will get imputation (must be of quantitative type)}
+\item{\code{columns}}{A vector listing the names of the columns that will get imputation (must be quantitative features).}
 }
 \if{html}{\out{</div>}}
 }
+\subsection{Returns}{
+Nothing. The object is internally updated when using this method.
+}
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{# Fits the object to a given dataset
+imputer$fit(X_train)
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Simple.Quanti.Imputer-transform"></a>}}
 \if{latex}{\out{\hypertarget{method-Simple.Quanti.Imputer-transform}{}}}
 \subsection{Method \code{transform()}}{
-Transform the passed data object based on the fit data object
+This method applies on a given dataset the transformation rules the imputer learned from the dataset it was fit to.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Simple.Quanti.Imputer$transform(data)}\if{html}{\out{</div>}}
 }
@@ -85,19 +136,28 @@ Transform the passed data object based on the fit data object
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{data}}{Dataframe}
+\item{\code{data}}{A dataframe containing the quantitative data that will get missing values imputation.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Dataframe of data after imputation
+A dataframe containing the data with its missing values filled.
 }
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{# Performs a quantitative imputation on a given dataset
+X_test_filled <- imputer$transform(X_test)
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Simple.Quanti.Imputer-fit_transform"></a>}}
 \if{latex}{\out{\hypertarget{method-Simple.Quanti.Imputer-fit_transform}{}}}
 \subsection{Method \code{fit_transform()}}{
-Fit to data object following the specified method then impute NA
+This method fits an imputer on a given dataset then fill the missing values in it.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Simple.Quanti.Imputer$fit_transform(data, columns)}\if{html}{\out{</div>}}
 }
@@ -105,15 +165,24 @@ Fit to data object following the specified method then impute NA
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{data}}{Dataframe}
+\item{\code{data}}{A dataframe containing the quantitative data that will get missing values imputation.}
 
-\item{\code{columns}}{Vector of column names that will get imputation (must be of quantitative type)}
+\item{\code{columns}}{A vector listing the names of the columns that will get imputation (must be quantitative features).}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-Dataframe of data after imputation
+A dataframe containing the data with its missing values filled.
 }
+\subsection{Examples}{
+\if{html}{\out{<div class="r example copy">}}
+\preformatted{# Fitting and imputing missing values on a given dataset
+X_train_filled <- imputer$fit_transform(X_train)
+}
+\if{html}{\out{</div>}}
+
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-Simple.Quanti.Imputer-clone"></a>}}

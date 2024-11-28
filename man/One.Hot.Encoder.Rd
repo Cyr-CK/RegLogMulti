@@ -2,9 +2,9 @@
 % Please edit documentation in R/one_hot_encoder.R
 \name{One.Hot.Encoder}
 \alias{One.Hot.Encoder}
-\title{One-Hot Encoder}
+\title{One-Hot Encoder (OHE)}
 \description{
-Class of a One-Hot Encoder object that has fit, fit_transform and transform methods to use over the qualitative features you want to encode.
+Class of a One-Hot Encoder (OHE) object that has fit, fit_transform and transform methods to use over the qualitative features you want to encode.
 }
 \examples{
 ohe <- One.Hot.Encoder$new().
@@ -13,15 +13,42 @@ X_train_ohe <- ohe$fit_transform(X_train).
 
 ohe$fit(X_train).
 X_test_ohe <- ohe$transform(X_test)
+
+## ------------------------------------------------
+## Method `One.Hot.Encoder$new`
+## ------------------------------------------------
+
+# Creates a new instance of the class
+ohe <- One.Hot.Encoder$new()
+
+## ------------------------------------------------
+## Method `One.Hot.Encoder$fit`
+## ------------------------------------------------
+
+# Fits the object to a given dataset
+ohe$fit(X_train)
+
+## ------------------------------------------------
+## Method `One.Hot.Encoder$transform`
+## ------------------------------------------------
+
+# One-hot encoding a given dataset
+X_test_ohe <- ohe$transform(X_test)
+
+## ------------------------------------------------
+## Method `One.Hot.Encoder$fit_transform`
+## ------------------------------------------------
+
+# Fitting and one-hot encoding a given dataset
+X_train_ohe <- ohe$fit_transform(X_train)
 }
-% \section{Public fields}{
-% \if{html}{\out{<div class="r6-fields">}}
-% \describe{
-% \item{\code{categories}}{(\code{list()}) \cr
-% Categories of qualitative features.}
-% }
-% \if{html}{\out{</div>}}
-% }
+\section{Public fields}{
+\if{html}{\out{<div class="r6-fields">}}
+\describe{
+\item{\code{categories}}{Categories of qualitative features.}
+}
+\if{html}{\out{</div>}}
+}
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
@@ -36,17 +63,19 @@ X_test_ohe <- ohe$transform(X_test)
 \if{html}{\out{<a id="method-One.Hot.Encoder-new"></a>}}
 \if{latex}{\out{\hypertarget{method-One.Hot.Encoder-new}{}}}
 \subsection{Method \code{new()}}{
-This method initializes a one-hot encoder object by setting up the necessary internal parameters.
+This method initializes a one-hot encoder (OHE) object by setting up the necessary internal parameters.
 It is automatically called when a new object of this class is created.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{One.Hot.Encoder$new()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+A new OHE model object.
+}
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{# Creates a new instance of the class
 ohe <- One.Hot.Encoder$new()
-
 }
 \if{html}{\out{</div>}}
 
@@ -57,7 +86,7 @@ ohe <- One.Hot.Encoder$new()
 \if{html}{\out{<a id="method-One.Hot.Encoder-fit"></a>}}
 \if{latex}{\out{\hypertarget{method-One.Hot.Encoder-fit}{}}}
 \subsection{Method \code{fit()}}{
-This method fits a One-Hot Encoder (OHE) on a given dataset.
+This method fits an OHE on a given dataset.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{One.Hot.Encoder$fit(data)}\if{html}{\out{</div>}}
 }
@@ -65,22 +94,20 @@ This method fits a One-Hot Encoder (OHE) on a given dataset.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{X_quali}}{A dataframe containing the qualitative data from which the object learns to perform future one-hot encoding.}
+\item{\code{data}}{A dataframe containing the qualitative data from which the object learns to perform future one-hot encoding.}
 }
 \if{html}{\out{</div>}}
 }
-
 \subsection{Returns}{
 Nothing. The object is internally updated when using this method.
 }
-
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{# Fits the object to a given dataset
 ohe$fit(X_train)
-	
 }
 \if{html}{\out{</div>}}
+
 }
 
 }
@@ -88,7 +115,7 @@ ohe$fit(X_train)
 \if{html}{\out{<a id="method-One.Hot.Encoder-transform"></a>}}
 \if{latex}{\out{\hypertarget{method-One.Hot.Encoder-transform}{}}}
 \subsection{Method \code{transform()}}{
-This method transforms a given dataset based on that which the OHE was fit to.
+This method applies on a given dataset the transformation rules the OHE learned from the dataset it was fit to.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{One.Hot.Encoder$transform(data)}\if{html}{\out{</div>}}
 }
@@ -96,22 +123,24 @@ This method transforms a given dataset based on that which the OHE was fit to.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{X_quali}}{A dataframe containing the qualitative data that will undergo one-hot encoding.}
+\item{\code{data}}{A dataframe containing the qualitative data that will undergo one-hot encoding.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Details}{
+After transformation, for each features (which can only be qualitative), the one-hot encoded column of the last modality is automatically dropped in order to avoid multicolinearity issue when modelling.
 }
 
 \subsection{Returns}{
 A (sparse) dataframe containing the one-hot encoded qualitative features.
 }
-
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{# One-hot encoding a given dataset
 X_test_ohe <- ohe$transform(X_test)
-	
 }
 \if{html}{\out{</div>}}
+
 }
 
 }
@@ -119,7 +148,7 @@ X_test_ohe <- ohe$transform(X_test)
 \if{html}{\out{<a id="method-One.Hot.Encoder-fit_transform"></a>}}
 \if{latex}{\out{\hypertarget{method-One.Hot.Encoder-fit_transform}{}}}
 \subsection{Method \code{fit_transform()}}{
-This method fits a One-Hot Encoder (OHE) on a given dataset then transforms it.
+This method fits an OHE on a given dataset then transforms it.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{One.Hot.Encoder$fit_transform(data)}\if{html}{\out{</div>}}
 }
@@ -127,22 +156,24 @@ This method fits a One-Hot Encoder (OHE) on a given dataset then transforms it.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{X_quali}}{A dataframe containing the qualitative data to which the object will be fit and perform one-hot encoding.}
+\item{\code{data}}{A dataframe containing the qualitative data to which the object will be fit and perform one-hot encoding.}
 }
 \if{html}{\out{</div>}}
+}
+\subsection{Details}{
+After transformation, for each features (which can only be qualitative), the one-hot encoded column corresponding to the last modality is automatically dropped in order to avoid multicolinearity issue when modelling.
 }
 
 \subsection{Returns}{
 A (sparse) dataframe containing the one-hot encoded qualitative features.
 }
-
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{# Fitting and one-hot encoding a given dataset
 X_train_ohe <- ohe$fit_transform(X_train)
-	
 }
 \if{html}{\out{</div>}}
+
 }
 
 }

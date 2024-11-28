@@ -1,9 +1,11 @@
-#' One-Hot Encoder
+#' One-Hot Encoder (OHE)
+#'
 #' @description
-#' Class of a One-Hot Encoder object that has fit, fit_transform and transform methods to use over the qualitative features you want to encode.
+#' Class of a One-Hot Encoder (OHE) object that has fit, fit_transform and transform methods to use over the qualitative features you want to encode.
+#'
+# #' @details#'
 #'
 #' @import R6
-#'
 #' @export
 #'
 #' @examples
@@ -13,23 +15,30 @@
 #'
 #' ohe$fit(X_train).
 #' X_test_ohe <- ohe$transform(X_test)
-One.Hot.Encoder <- R6Class("One.Hot.Encoder",
+
+One.Hot.Encoder <- R6::R6Class("One.Hot.Encoder",
                                public = list(
-                                 #' @field categories (`list()`) \cr
-                                 #' Categories of qualitative features.
+                                 #' @field categories Categories of qualitative features.
                                  categories = NULL,
 
                                  #' @description
-                                 #' Create a new one-hot encoder object.
-                                 #' @return A new one-hot encoder object.
+                                 #' This method initializes a one-hot encoder (OHE) object by setting up the necessary internal parameters.
+                                 #' It is automatically called when a new object of this class is created.
+                                 #' @return A new OHE model object.
+                                 #' @examples
+                                 #' # Creates a new instance of the class
+                                 #' ohe <- One.Hot.Encoder$new()
                                  initialize = function(){
                                    self$categories <- list()
                                  },
 
                                  #' @description
-                                 #' Fit the one-hot encoder to data.
-                                 #' @param data (`dataframe`) Dataframe.
-                                 #' @return nothing
+                                 #' This method fits an OHE on a given dataset.
+                                 #' @param data A dataframe containing the qualitative data from which the object learns to perform future one-hot encoding.
+                                 #' @return Nothing. The object is internally updated when using this method.
+                                 #' @examples
+                                 #' # Fits the object to a given dataset
+                                 #' ohe$fit(X_train)
                                  fit = function(data) {
                                    for (col in names(data)) {
                                      self$categories[[col]] <- unique(data[[col]])
@@ -38,9 +47,14 @@ One.Hot.Encoder <- R6Class("One.Hot.Encoder",
                                  },
 
                                  #' @description
-                                 #' Transform the passed data object based on the fit data object.
-                                 #' @param data (`dataframe`) Dataframe.
-                                 #' @return Dataframe of one-hot encoded data.
+                                 #' This method applies on a given dataset the transformation rules the OHE learned from the dataset it was fit to.
+                                 #' @details
+                                 #' After transformation, for each features (which can only be qualitative), the one-hot encoded column of the last modality is automatically dropped in order to avoid multicolinearity issue when modelling.
+                                 #' @param data A dataframe containing the qualitative data that will undergo one-hot encoding.
+                                 #' @return A (sparse) dataframe containing the one-hot encoded qualitative features.
+                                 #' @examples
+                                 #' # One-hot encoding a given dataset
+                                 #' X_test_ohe <- ohe$transform(X_test)
                                  transform = function(data) {
                                    result <- data.frame(row.names = 1:nrow(data))
                                    for (col in names(data)) {
@@ -55,11 +69,15 @@ One.Hot.Encoder <- R6Class("One.Hot.Encoder",
                                    result
                                  },
 
-
                                  #' @description
-                                 #' Fit to data object then one-hot encode it.
-                                 #' @param data (`dataframe`) Dataframe.
-                                 #' @return Dataframe of one-hot encoded data.
+                                 #' This method fits an OHE on a given dataset then transforms it.
+                                 #' @details
+                                 #' After transformation, for each features (which can only be qualitative), the one-hot encoded column corresponding to the last modality is automatically dropped in order to avoid multicolinearity issue when modelling.
+                                 #' @param data A dataframe containing the qualitative data to which the object will be fit and perform one-hot encoding.
+                                 #' @return A (sparse) dataframe containing the one-hot encoded qualitative features.
+                                 #' @examples
+                                 #' # Fitting and one-hot encoding a given dataset
+                                 #' X_train_ohe <- ohe$fit_transform(X_train)
                                  fit_transform = function(data) {
                                    self$fit(data)
                                    self$transform(data)
