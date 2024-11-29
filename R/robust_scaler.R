@@ -42,10 +42,12 @@ Robust.Scaler <- R6::R6Class("Robust.Scaler",
                                  #' # Fits the object to a given dataset
                                  #' scaler$fit(X_train)
                                  fit = function(data) {
-                                   self$median <- apply(data,2, median, na.rm = TRUE)
-                                   self$iqr <- apply(data, 2,
-                                                     function(x) quantile(x, 0.75) - quantile(x, 0.25),
-                                                     na.rm = TRUE)
+                                   quanti <- data[sapply(data,is.numeric)]
+                                   self$median <- sapply(quanti, median, na.rm = TRUE)
+                                   self$iqr <- apply(quanti, 2, function(x){
+                                     x <- x[!is.na(x)]
+                                     quantile(x, 0.75) - quantile(x, 0.25)
+                                   })
                                    invisible(self)
                                  },
 
@@ -60,7 +62,9 @@ Robust.Scaler <- R6::R6Class("Robust.Scaler",
                                    if (is.null(self$median) || is.null(self$iqr)) {
                                      stop("Fit the scaler before transforming data")
                                    }
-                                   t((t(data) - self$median) / self$iqr)
+                                   quanti <- data[sapply(data, is.numeric)]
+                                   data[names(quanti)] <- t((t(quanti) - self$median) / self$iqr)
+                                   data
                                  },
 
                                  #' @description

@@ -1,7 +1,7 @@
 #' Simple quantitative NA imputer
 #'
 #' @description
-#' Class of a quantitative NA imputer object that has fit, fit_transform and transform methods to impute quantitative missing values with mean or median method.
+#' Class of a quantitative NA imputer object that has fit, fit_transform and transform methods to impute quantitative missing values with remove, mean or median method.
 #'
 # #' @details
 #'
@@ -29,6 +29,7 @@ Simple.Quanti.Imputer <- R6::R6Class("Simple.Quanti.Imputer",
                                    #' @param imputation_type String defining the method of NA imputation.
                                    #' When it equals `mean`, the object is set to perform an imputation based on the mean, i.e. the average value of the feature.
                                    #' When it equals `median`, the object is set to perform an imputation based on the median, i.e. the median value of the feature.
+                                   #' When it equals `remove`, the object is set to perform observations removal if they have missing values
                                    #' @return A new quantitative imputer object.
                                    #' @examples
                                    #' # Creates a new instance of the class
@@ -40,17 +41,20 @@ Simple.Quanti.Imputer <- R6::R6Class("Simple.Quanti.Imputer",
                                    #' @description
                                    #' This method fits a quantitative imputer to data given the specified method.
                                    #' @param data A dataframe containing the quantitative data on which the imputer learns to fill missing values.
-                                   #' @param columns A vector listing the names of the columns that will get imputation (must be quantitative features).
+                                   # #' @param columns A vector listing the names of the columns that will get imputation (must be quantitative features).
                                    #' @return Nothing. The object is internally updated when using this method.
                                    #' @examples
                                    #' # Fits the object to a given dataset
                                    #' imputer$fit(X_train)
-                                   fit = function(data, columns) {
-                                     self$imputation_values <- apply(data[columns], 2, function(x) {
+                                   fit = function(data) {
+                                     quanti <- data[sapply(data, is.numeric)]
+                                     self$imputation_values <- apply(quanti, 2, function(x) {
                                        if (self$imputation_type == "mean") {
                                          mean(x, na.rm = TRUE)
                                        } else if (self$imputation_type == "median") {
                                          median(x, na.rm = TRUE)
+                                       } else if (self$imputation_type == "remove") {
+                                         x <- x[!is.na(x)]
                                        } else {
                                          stop("Unsupported imputation type")
                                        }
@@ -75,12 +79,12 @@ Simple.Quanti.Imputer <- R6::R6Class("Simple.Quanti.Imputer",
                                    #' @description
                                    #' This method fits an imputer on a given dataset then fill the missing values in it.
                                    #' @param data A dataframe containing the quantitative data that will get missing values imputation.
-                                   #' @param columns A vector listing the names of the columns that will get imputation (must be quantitative features).
+                                   # #' @param columns A vector listing the names of the columns that will get imputation (must be quantitative features).
                                    #' @return A dataframe containing the data with its missing values filled.
                                    #' @examples
                                    #' # Fitting and imputing missing values on a given dataset
                                    #' X_train_filled <- imputer$fit_transform(X_train)
-                                   fit_transform = function(data, columns) {
+                                   fit_transform = function(data) {
                                      self$fit(data, columns)
                                      return(self$transform(data))
                                    }

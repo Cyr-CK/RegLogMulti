@@ -46,9 +46,12 @@ FAMD_ <- R6::R6Class("FAMD_",
                    #' famd$fit(X_train)
                    fit = function(data){
                      if (!is.data.frame(data)){
-                       stop("Data are not in a dataframe format")
+                       stop("`data` must be a dataframe. See as.data.frame()")
                      }
                      if (is.null(self$n_components)){
+                       warning("When `n_components` is null, it is automatically
+                               set to the number of features in the dataset
+                               (see docs for further details).")
                        self$n_components <- ncol(data)
                      }
                      self$model <- FactoMineR::FAMD(data, ncp=self$n_components, graph=FALSE)

@@ -43,8 +43,9 @@ Standard.Scaler <- R6::R6Class("Standard.Scaler",
                              #' # Fits the object to a given dataset
                              #' scaler$fit(X_train)
                              fit = function(data) {
-                               self$mean <- apply(data,2, mean, na.rm = TRUE)
-                               self$std <- apply(data, 2, sd, na.rm = TRUE)
+                               quanti <- data[sapply(data,is.numeric)]
+                               self$mean <- apply(quanti,2, mean, na.rm = TRUE)
+                               self$std <- apply(quanti, 2, sd, na.rm = TRUE)
                                invisible(self)
                              },
 
@@ -59,7 +60,9 @@ Standard.Scaler <- R6::R6Class("Standard.Scaler",
                                if (is.null(self$mean) || is.null(self$std)) {
                                  stop("Fit the scaler before transforming data")
                                }
-                               t((t(data) - self$mean) / self$std)
+                               quanti <- data[sapply(data, is.numeric)]
+                               data[names(quanti)] <- t((t(quanti) - self$mean) / self$std)
+                               data
                              },
 
                              #' @description
