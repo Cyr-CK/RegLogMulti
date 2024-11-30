@@ -69,6 +69,9 @@ FAMD_ <- R6::R6Class("FAMD_",
                      if (is.null(self$model)){
                        stop("Fit() method must be used before transform()")
                      }
+                     if (!is.data.frame(data)){
+                       stop("`data` must be a dataframe. See as.data.frame()")
+                     }
                      coord <- predict(self$model, data)$coord
 
                      return(as.data.frame(coord[, 1:self$n_components]))

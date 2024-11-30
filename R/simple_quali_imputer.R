@@ -50,13 +50,10 @@ Simple.Quali.Imputer <- R6::R6Class("Simple.Quali.Imputer",
                                     if (!is.data.frame(data)){
                                       stop("`data` must be a dataframe. See as.data.frame()")
                                     }
-                                    # if ((is.null(columns)) | (!is.vector(columns))){
-                                    #   stop("`columns` must be a vector of feature names. See c()")
-                                    # }
-                                    # if (any(sapply(data[columns], is.numeric))){
-                                    #   stop("Features cannot be numeric")
-                                    # }
                                     quali <- data[!sapply(data, is.numeric)]
+                                    if (ncol(quali) == 0){
+                                      stop("No qualitative features in your dataset")
+                                    }
                                     self$imputation_values <- apply(quali, 2, function(x) {
                                       if (self$imputation_type == "mode") {
                                         Mode <- function(x, na.rm = FALSE) {
@@ -103,6 +100,9 @@ Simple.Quali.Imputer <- R6::R6Class("Simple.Quali.Imputer",
                                   transform = function(data) {
                                     if (is.null(self$imputation_values)){
                                       stop("Fit() method must be used before transform()")
+                                    }
+                                    if (!is.data.frame(data)){
+                                      stop("`data` must be a dataframe. See as.data.frame()")
                                     }
                                     for (col in names(self$imputation_values)) {
                                       data[[col]][is.na(data[[col]])] <- self$imputation_values[[col]]

@@ -47,7 +47,13 @@ Simple.Quanti.Imputer <- R6::R6Class("Simple.Quanti.Imputer",
                                    #' # Fits the object to a given dataset
                                    #' imputer$fit(X_train)
                                    fit = function(data) {
+                                     if (!is.data.frame(data)){
+                                       stop("`data` must be a dataframe. See as.data.frame()")
+                                     }
                                      quanti <- data[sapply(data, is.numeric)]
+                                     if (ncol(quanti) == 0){
+                                       stop("No quantitative features in your dataset")
+                                     }
                                      self$imputation_values <- apply(quanti, 2, function(x) {
                                        if (self$imputation_type == "mean") {
                                          mean(x, na.rm = TRUE)
@@ -70,6 +76,12 @@ Simple.Quanti.Imputer <- R6::R6Class("Simple.Quanti.Imputer",
                                    #' # Performs a quantitative imputation on a given dataset
                                    #' X_test_filled <- imputer$transform(X_test)
                                    transform = function(data) {
+                                     if (is.null(self$imputation_values)){
+                                       stop("Fit() method must be used before transform()")
+                                     }
+                                     if (!is.data.frame(data)){
+                                       stop("`data` must be a dataframe. See as.data.frame()")
+                                     }
                                      for (col in names(self$imputation_values)) {
                                        data[[col]][is.na(data[[col]])] <- self$imputation_values[[col]]
                                      }

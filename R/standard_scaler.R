@@ -43,7 +43,13 @@ Standard.Scaler <- R6::R6Class("Standard.Scaler",
                              #' # Fits the object to a given dataset
                              #' scaler$fit(X_train)
                              fit = function(data) {
+                               if (!is.data.frame(data)){
+                                 stop("`data` must be a dataframe. See as.data.frame()")
+                               }
                                quanti <- data[sapply(data,is.numeric)]
+                               if (ncol(quanti) == 0){
+                                 stop("No quantitative features in your dataset")
+                               }
                                self$mean <- apply(quanti,2, mean, na.rm = TRUE)
                                self$std <- apply(quanti, 2, sd, na.rm = TRUE)
                                invisible(self)
@@ -58,9 +64,15 @@ Standard.Scaler <- R6::R6Class("Standard.Scaler",
                              #' X_test_scaled <- scaler$transform(X_test)
                              transform = function(data) {
                                if (is.null(self$mean) || is.null(self$std)) {
-                                 stop("Fit the scaler before transforming data")
+                                 stop("Fit() method must be used before transform()")
+                               }
+                               if (!is.data.frame(data)){
+                                 stop("`data` must be a dataframe. See as.data.frame()")
                                }
                                quanti <- data[sapply(data, is.numeric)]
+                               if (ncol(quanti) == 0){
+                                 stop("No quantitative features in your dataset")
+                               }
                                data[names(quanti)] <- t((t(quanti) - self$mean) / self$std)
                                data
                              },

@@ -42,7 +42,13 @@ Robust.Scaler <- R6::R6Class("Robust.Scaler",
                                  #' # Fits the object to a given dataset
                                  #' scaler$fit(X_train)
                                  fit = function(data) {
+                                   if (!is.data.frame(data)){
+                                     stop("`data` must be a dataframe. See as.data.frame()")
+                                   }
                                    quanti <- data[sapply(data,is.numeric)]
+                                   if (ncol(quanti) == 0){
+                                     stop("No quantitative features in your dataset")
+                                   }
                                    self$median <- sapply(quanti, median, na.rm = TRUE)
                                    self$iqr <- apply(quanti, 2, function(x){
                                      x <- x[!is.na(x)]
@@ -60,9 +66,12 @@ Robust.Scaler <- R6::R6Class("Robust.Scaler",
                                  #' X_test_scaled <- scaler$transform(X_test)
                                  transform = function(data) {
                                    if (is.null(self$median) || is.null(self$iqr)) {
-                                     stop("Fit the scaler before transforming data")
+                                     stop("Fit() method must be used before transform()")
                                    }
                                    quanti <- data[sapply(data, is.numeric)]
+                                   if (ncol(quanti) == 0){
+                                     stop("No quantitative features in your dataset")
+                                   }
                                    data[names(quanti)] <- t((t(quanti) - self$median) / self$iqr)
                                    data
                                  },
