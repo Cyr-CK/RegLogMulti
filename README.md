@@ -32,10 +32,9 @@ The included Shiny application provides an interactive graphical interface for d
 
 To install and set up the package:
 
-1. **Clone the repository**:
    ```bash
-   git clone https://github.com/Cyr-CK/RegLogMulti.git
-   cd reg-log-multi-for-R
+   devtools::install_github("Cyr-CK/RegLogMulti", force = TRUE)
+
 
 ## Features
 
