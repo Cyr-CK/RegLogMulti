@@ -34,7 +34,7 @@ To install and set up the package:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/username/reg-log-multi-for-R.git
+   git clone https://github.com/Cyr-CK/RegLogMulti.git
    cd reg-log-multi-for-R
 
 ## Features
