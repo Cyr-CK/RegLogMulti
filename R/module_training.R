@@ -150,11 +150,15 @@ module_training_ui <- function(id) {
        tabPanel("Lr",
                    plotOutput(ns("lr_plot"))
       
-        )
+        ),
+        tabPanel("Variable Importance",
+                     h4("Top 10 Important Variables"),
+                     plotOutput(ns("var_importance_plot")),
+                     DTOutput(ns("var_importance_table"))
       )
     )
   )
-  ))
+  )))
 }
 
 module_training_server <- function(id, data , target_variable, explanatory_variables) {
@@ -197,7 +201,10 @@ module_training_server <- function(id, data , target_variable, explanatory_varia
       y_train = NULL,
       y_test = NULL,
       predictions = NULL,
-      learning_rate_history = NULL # Store learning rate history
+      learning_rate_history = NULL ,
+      var_importance = NULL
+
+
     )
 
     # Observe Fit Model button
@@ -284,6 +291,13 @@ module_training_server <- function(id, data , target_variable, explanatory_varia
         confusion_matrix_df <- cbind(Prediction = rownames(confusion_matrix_df), confusion_matrix_df)
         rownames(confusion_matrix_df) <- NULL
         
+      var_importance <- rv$model$get_variable_importance()
+      top_vars <- head(var_importance[order(-var_importance$Importance), ], 10)
+      rv$var_importance <- top_vars
+
+        output$training_status <- renderPrint({
+        rv$model$summary()
+      })
         # Render training results
         output$training_results <- renderUI({
           tagList(
@@ -331,7 +345,22 @@ module_training_server <- function(id, data , target_variable, explanatory_varia
     })
 
    
-  })
+# Render Variable Importance Plot
+      output$var_importance_plot <- renderPlot({
+        ggplot(rv$var_importance, aes(x = reorder(Variable, Importance), y = Importance)) +
+          geom_bar(stat = "identity", fill = "steelblue") +
+          coord_flip() +
+          labs(title = "Top 10 Important Variables",
+               x = "Variables",
+               y = "Importance") +
+          theme_minimal()
+      })
+
+      # Render Variable Importance Table
+      output$var_importance_table <- renderDT({
+        datatable(rv$var_importance, options = list(pageLength = 10, autoWidth = TRUE))
+      })
+    })
   })
 }
 
