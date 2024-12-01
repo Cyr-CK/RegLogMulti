@@ -6,15 +6,16 @@ The **reg-log-multi-for-R** package provides a comprehensive implementation of m
 
 ---
 
+
 ## Table of Contents
 1. [Description](#description)
-2. [Features](#features)
-3. [Shiny Application Guide](#shiny-application-guide)
+2. [Installation](#installation)
+3. [Features](#features)
+4. [Shiny Application Guide](#shiny-application-guide)
    - [Data Management](#data-management)
    - [Preprocessing](#preprocessing)
    - [Model Training](#model-training)
-4. [How to Contribute](#how-to-contribute)
-5. [License](#license)
+
 
 ---
 
@@ -27,6 +28,14 @@ The **reg-log-multi-for-R** package enables users to:
 The included Shiny application provides an interactive graphical interface for data handling, preprocessing, model configuration, and evaluation.
 
 ---
+## Installation
+
+To install and set up the package:
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/username/reg-log-multi-for-R.git
+   cd reg-log-multi-for-R
 
 ## Features
 
