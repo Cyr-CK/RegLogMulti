@@ -153,8 +153,7 @@ module_training_ui <- function(id) {
         ),
         tabPanel("Variable Importance",
                      h4("Top 10 Important Variables"),
-                     plotOutput(ns("var_importance_plot")),
-                     DTOutput(ns("var_importance_table"))
+                     plotOutput(ns("var_importance_plot"))
       )
     )
   )
@@ -356,10 +355,7 @@ module_training_server <- function(id, data , target_variable, explanatory_varia
           theme_minimal()
       })
 
-      # Render Variable Importance Table
-      output$var_importance_table <- renderDT({
-        datatable(rv$var_importance, options = list(pageLength = 10, autoWidth = TRUE))
-      })
+
     })
   })
 }
