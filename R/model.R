@@ -1,6 +1,4 @@
-#' One-Hot Encoder (OHE)
-#' @description 
-#' This class is used to perform one-hot encoding on categorical variables in a dataset.
+
 if (!require(R6)) {
     install.packages("R6")
     library(R6)
@@ -22,7 +20,10 @@ library(caret)
 library(Matrix)
 library(matrixStats) # Charger le package matrixStats pour des opérations optimisées
 
-
+#' MultinomialLogisticRegression
+#' @description 
+#' This class is used to perform one-hot encoding on categorical variables in a dataset.
+#' 
 MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
   public = list(
     #' @field weights Matrix of weights used by the model for prediction.
@@ -90,7 +91,7 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
     #' @param initialization String. The method used for initializing weights ("xavier" or "zeros").
     #' 
     #' @return Initializes an instance of the `MultinomialLogisticRegression` class with the specified parameters.
-    #' @examples
+    #' @exampless
     #' # Create a new instance of the class
     #' model <- MultinomialLogisticRegression$new(learning_rate = 0.001, 
     #'  #                                            iterations = 100, 
@@ -114,23 +115,23 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
                           batch_size = 32,
                           beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8,
                           warmup_epochs = 0, initial_learning_rate = 0.001, initialization = "xavier") {
-      self$learning_rate <- learning_rate
-      self$optimizer <- optimizer
-      self$regularization <- regularization
-      self$regularization_strength <- regularization_strength
-      self$lr_decay <- lr_decay
-      self$decay_rate <- decay_rate
-      self$loss_function <- loss_function
+      self$learning_rate <- learning_rate # Taux d'apprentissage
+      self$optimizer <- optimizer # Optimiseur
+      self$regularization <- regularization # Type de régularisation
+      self$regularization_strength <- regularization_strength # Force de régularisation
+      self$lr_decay <- lr_decay # Décroissance du taux d'apprentissage  
+      self$decay_rate <- decay_rate # Taux de décroissance du taux d'apprentissage
+      self$loss_function <- loss_function # Fonction de perte
       self$loss_history <- numeric(iterations)  # Pré-allocation
       self$learning_rate_history <- numeric(iterations)  # Pré-allocation
-      self$batch_size <- batch_size
-      self$beta1 <- beta1
-      self$beta2 <- beta2
-      self$epsilon <- epsilon
-      self$iterations <- iterations
-      self$warmup_epochs <- warmup_epochs
-      self$initial_learning_rate <- initial_learning_rate
-      self$initialization <- initialization
+      self$batch_size <- batch_size # Taille du mini-batch  
+      self$beta1 <- beta1 # Taux de décroissance du premier moment
+      self$beta2 <- beta2 # Taux de décroissance du deuxième moment
+      self$epsilon <- epsilon # Valeur epsilon pour éviter la division par zéro
+      self$iterations <- iterations # Nombre d'itérations
+      self$warmup_epochs <- warmup_epochs # Nombre d'époques de warmup
+      self$initial_learning_rate <- initial_learning_rate # Taux d'apprentissage initial
+      self$initialization <- initialization # Initialisation des poids
     },
     #' @description 
     #' This method fits the model to data given.
@@ -139,7 +140,7 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
     #' @param epochs Integer. Iteration for convergence
     #' @param progress_callback Function. To view the progress of model training on data.
     #' @return Nothing. The object is internally updated when using this method.
-    #' @example
+    #' @exampless
     #'  # model$fit(as.matrix(X_train), y_train)
 
     fit = function(X, y, epochs = self$iterations , progress_callback = NULL) {
@@ -257,7 +258,7 @@ for (batch in batch_indices) {
     #' @param X Matrix. Explanatory variables from the test dataset
     #' @return Vector. The predicted class for each value of the test dataset.
     #' 
-    #' @example
+    #' @exampless
     #' # predictions <- model$predict(X_test)
 
     predict = function(X) {
@@ -275,7 +276,7 @@ for (batch in batch_indices) {
     #' @param X Matrix. Explanatory variables from the test dataset.
     #' @return Matrix. The probability of belonging to each class.
     #' 
-    #' @example
+    #' @examples
     #' # predictions <- model$predict_proba(X_test)
     predict_proba = function(X) {
       if (!is.matrix(X)) {
@@ -289,7 +290,7 @@ for (batch in batch_indices) {
     #' This function computes the softmax probabilities for a given set of scores.
     #' @param scores Matrix. Matrix product between weights and the matrix with the explanatory variable.
     #' @return Matrix. Probabilities where each row  sums to 1.
-    #' @example
+    #' @examples
     #' # probs <- softmax(scores)
     softmax = function(scores) {
       exp_scores <- exp(scores - matrixStats::rowMaxs(scores))
@@ -298,12 +299,12 @@ for (batch in batch_indices) {
     },
 
     #' @description
-    #' Calculate loss based on a criterion cross entropy or squared error
-    #' @param probs Matrix. Probabilities calculated with
-    #' Matrix product between weights and the matrix with the explanatory variable.
-    #' @return Matrix. Probabilities where each row  sums to 1.
-    #' @example
-    #' # probs <- softmax(scores)
+    #' This function computes the loss value for a given set of probabilities and one-hot encoded target values.
+    #' @param probs Matrix. Probabilities of belonging to each class.
+    #' @param y_one_hot Matrix. One-hot encoded target values.
+    #' @return Float. The loss value calculated based on the probabilities and target values.
+    #' @examples
+    #' # loss <- compute_loss(probs, y_one_hot)
     compute_loss = function(probs, y_one_hot) {
       if (self$loss_function == "cross_entropy") {
         epsilon_val <- 1e-15
@@ -317,11 +318,10 @@ for (batch in batch_indices) {
     },
 
     #' @description
-    #' Retrieves the history of loss values recorded during the model's training process. 
-    #' 
-    #' @return Matrix.
-    #' @example
-    #' # model$get_lost_history()
+    #' This function returns the loss history of the model during training.
+    #' @return Numeric vector. Loss values over iterations during training.
+    #' @examples
+    #' # loss_history <- model$get_loss_history()
     get_loss_history = function() {
       self$loss_history
     },
@@ -329,7 +329,7 @@ for (batch in batch_indices) {
     #' @description
     #' To plot the loss curve
     #' @return lineplot. Loss variations as a function of iteration. 
-    #' @example
+    #' @examples
     #' #  model$plot_loss_history()
     plot_loss_history = function() {
       if (length(self$loss_history) == 0) {
@@ -345,7 +345,7 @@ for (batch in batch_indices) {
     #' @description
     #' To plot the learning rate by epoch
     #' @return lineplot. Learning rate by epoch.
-    #' @example
+    #' @examples
     #' #  model$plot_loss_history()
     plot_learning_rate_history = function() {
       if (length(self$learning_rate_history) == 0) {
@@ -362,7 +362,7 @@ for (batch in batch_indices) {
     #' @description
     #' To have the importance of each variable
     #' @return DataFrame with the importance calculated for each variable.
-    #' @example
+    #' @examples
     #' #  model$get_variable_importance()
     get_variable_importance = function() {
       if (is.null(self$weights)) {
@@ -378,13 +378,21 @@ for (batch in batch_indices) {
     #' To have the N most important variable in the model
     #' @param n Integer. Number of the best variable to select
     #' @return Vector. Names of the n best variable based on their importance.
-    #' @example
+    #' @examples
     #' #  model$var_select(5)
     var_select = function(n) {
       importance_df <- self$get_variable_importance()
       top_vars <- importance_df$Variable[1:n]
       return(top_vars)
     },
+
+    #' @description
+    #' Calculate the accuracy of the model
+    #' @param y_test Factor. The target variable with the real class.
+    #' @param y_pred Factor. The class predicted from the model
+    #' @return Float. The accuracy of the model.
+    #' @examples
+    #' #  model$accuracy(y_test, y_pred)
 
     accuracy = function(y_test, y_pred) {
       mean(y_test == y_pred)
@@ -395,7 +403,7 @@ for (batch in batch_indices) {
     #' @param y_test Factor. The target variable with the real class.
     #' @param y_pred Factor. The class predicted from the model
     #' @return Matrix. Display the confusion matrix calculated.
-    #' @example
+    #' @examples
     #' #  model$confusion_matrix(y_test, y_pred)
     confusion_matrix = function(y_test, predictions) {
             
@@ -412,7 +420,7 @@ for (batch in batch_indices) {
     #' @description
     #' Display all informations parameters about the models
     #' @return Text. print informations
-    #' @example
+    #' @examples
     #' #  model$summary()
     summary = function() {
       cat("Multinomial Logistic Regression Model\n")
@@ -428,6 +436,11 @@ for (batch in batch_indices) {
       cat("Initial Learning Rate: ", self$initial_learning_rate, "\n")
       cat("Initialization: ", self$initialization, "\n")
     },
+    #' @description
+    #' display a small summary of the model
+    #' @return Text. print informations
+    #' @examples
+    #' #  model$print()
     print = function() {
         cat("Multinomial Logistic Regression Model\n")
         cat("-------------------------------\n")
@@ -446,7 +459,7 @@ for (batch in batch_indices) {
     #' @param random_stat Integer. Controls the random seed for reproducibility.
     #' @param shuffle binary. If true, then the samples are constructed with randomness.
     #' @return List with data separated into trains/tests 
-    #' @example
+    #' @examples
     #' # split_data <- split_train_test(data = data, target_var = target_var, explanatory_vars = explanatory_vars, train_ratio = 0.9, random_state = 123, 
 split_train_test <- function(data, target_var, explanatory_vars, train_ratio = 0.8, random_state = NULL, shuffle = TRUE) {
     # Vérifier les entrées
