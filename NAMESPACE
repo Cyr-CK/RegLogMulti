@@ -2,10 +2,12 @@
 
 export(FAMD_)
 export(MinMax.Scaler)
+export(MultinomialLogisticRegression)
 export(One.Hot.Encoder)
 export(Robust.Scaler)
 export(Simple.Quali.Imputer)
 export(Simple.Quanti.Imputer)
 export(Standard.Scaler)
+export(split_train_test)
 import(FactoMineR)
 import(R6)

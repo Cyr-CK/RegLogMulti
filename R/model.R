@@ -23,6 +23,7 @@ library(matrixStats) # Charger le package matrixStats pour des opérations optim
 #' Multinomial Logistic Regression
 #' @description
 #' This class is used to perform one-hot encoding on categorical variables in a dataset.
+#' @export
 MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
   public = list(
     #' @field weights Matrix of weights used by the model for prediction.
@@ -461,6 +462,7 @@ for (batch in batch_indices) {
     #' @return List with data separated into trains/tests
     #' @examples
     #' split_data <- split_train_test(data = data, target_var = target_var, explanatory_vars = explanatory_vars, train_ratio = 0.9, random_state = 123,
+    #' @export
 split_train_test <- function(data, target_var, explanatory_vars, train_ratio = 0.8, random_state = NULL, shuffle = TRUE) {
     # Vérifier les entrées
     if (!is.data.frame(data)) {
