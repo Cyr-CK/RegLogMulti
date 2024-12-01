@@ -227,13 +227,6 @@ module_training_server <- function(id, data , target_variable, explanatory_varia
 
       )
 
-      print("Model Initialized")
-      print("target" )
-      print(reactive_target())
-      print("explanatory")
-      print(reactive_explanatory())
-      print("names")
-      print(names(processed_data()))
       # Extraire les données de formation en utilisant les valeurs réactives
       
       #enlever la target variable de exploratory variables si elle est dedans
