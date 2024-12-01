@@ -1,4 +1,6 @@
-
+#' One-Hot Encoder (OHE)
+#' @description 
+#' This class is used to perform one-hot encoding on categorical variables in a dataset.
 if (!require(R6)) {
     install.packages("R6")
     library(R6)
@@ -23,28 +25,87 @@ library(matrixStats) # Charger le package matrixStats pour des opérations optim
 
 MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
   public = list(
+    #' @field weights Matrix of weights used by the model for prediction.
     weights = NULL,
+    #' @field classes Vector of unique class labels derived from the training data.
     classes = NULL,
+    #' @field loss_history Numeric vector storing the loss values over iterations during training.
     loss_history = NULL,
+    #' @field learning_rate_history Numeric vector storing the learning rate values over epochs.
     learning_rate_history = NULL,
+    #' @field learning_rate Numeric value indicating the learning rate used for optimization.
     learning_rate = 0.01,
+    #' @field optimizer String specifying the optimization method (e.g., "adam", "sgd").
     optimizer = "adam",
+    #' @field regularization_strength Numeric value for the strength of the regularization term.
     regularization = NULL,
+    #' @field regularization_strength Numeric value for the strength of the regularization term.
     regularization_strength = 0.01,
+    #' @field lr_decay Logical value indicating whether learning rate decay is applied.
     lr_decay = FALSE,
+    #' @field decay_rate Numeric value for the learning rate decay factor.
     decay_rate = 0.001,
+    #' @field loss_function String specifying the loss function to use ("cross_entropy" or "squared_error").
     loss_function = "cross_entropy",
+    #' @field epsilon Numeric value to prevent division by zero in optimization calculations.
     epsilon = 1e-8,
+    #' @field batch_size Integer specifying the number of samples per mini-batch for training.
     batch_size = 32,
+    #' @field beta1 Numeric value for the exponential decay rate for the first moment in the Adam optimizer.
     beta1 = 0.9,
+    #' @field beta2 Numeric value for the exponential decay rate for the second moment in the Adam optimizer.
     beta2 = 0.999,
+    #' @field m Matrix used for storing the first moment estimates in the Adam optimizer.
     m = NULL,
+    #' @field v Matrix used for storing the second moment estimates in the Adam optimizer.
     v = NULL,
+    #' @field t Integer representing the current iteration for the Adam optimizer.
     t = 0,
+    #' @field iterations Integer specifying the total number of iterations for training.
     iterations = 100,  # Nombre d'itérations
+    #' @field warmup_epochs Integer specifying the number of warmup epochs where the learning rate is gradually increased.
     warmup_epochs = 0,  # Nombre d'épochs de warmup
+    #' @field initial_learning_rate Numeric value for the initial learning rate during the warmup phase.
     initial_learning_rate = 0.001,  # Learning rate initial pour le warmup
+    #' @field initialization String specifying the method used for initializing weights ("xavier" or "zeros").
     initialization = NULL,  # Initialisation des poids
+
+    #' @description
+    #' This method initializes a model with all defaults paramaters.
+    #' 
+    #' @param learning_rate Numeric. The learning rate used for optimization.
+    #' @param iterations Integer. The total number of iterations for training.
+    #' @param optimizer String. The optimization algorithm to use (e.g., "adam", "sgd").
+    #' @param regularization String. The type of regularization to apply ("L1", "L2", or NULL).
+    #' @param regularization_strength Numeric. The strength of the regularization term.
+    #' @param lr_decay Logical. Whether to apply learning rate decay.
+    #' @param decay_rate Numeric. The decay rate factor for learning rate decay.
+    #' @param loss_function String. The loss function to use ("cross_entropy" or "squared_error").
+    #' @param batch_size Integer. The number of samples per mini-batch for training.
+    #' @param beta1 Numeric. The exponential decay rate for the first moment in the optimizer.
+    #' @param beta2 Numeric. The exponential decay rate for the second moment in the optimizer.
+    #' @param epsilon Numeric. A small value to prevent division by zero in optimization calculations.
+    #' @param warmup_epochs Integer. The number of warmup epochs during which the learning rate is gradually increased.
+    #' @param initial_learning_rate Numeric. The initial learning rate for the warmup phase.
+    #' @param initialization String. The method used for initializing weights ("xavier" or "zeros").
+    #' 
+    #' @return Initializes an instance of the `MultinomialLogisticRegression` class with the specified parameters.
+    #' @examples
+    #' # Create a new instance of the class
+    #' model <- MultinomialLogisticRegression$new(learning_rate = 0.001, 
+    #'  #                                            iterations = 100, 
+    #'  #                                            batch_size =4, 
+    #'  #                                            regularization = "L1", 
+    #'  #                                            regularization_strength = 0.01, 
+    #'  #                                            optimizer = "adam",
+    #'  #                                            beta1 = 0.9,
+    #'  #                                            beta2 = 0.999,
+    #'  #                                            epsilon = 1e-8,
+    #'  #                                            lr_decay = TRUE,        
+    #'  #                                            decay_rate = 0.01,
+    #'  #                                            warmup_epochs = 10, 
+    #'  #                                            initial_learning_rate = 0.0001,
+    #'  #                                            initialization = "zeros")
 
     initialize = function(learning_rate = 0.01, iterations = 100, optimizer = "adam",
                           regularization = NULL, regularization_strength = 0.01,
@@ -71,6 +132,15 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
       self$initial_learning_rate <- initial_learning_rate
       self$initialization <- initialization
     },
+    #' @description 
+    #' This method fits the model to data given.
+    #' @param X Matrix. Explanatory variables
+    #' @param y Factor. Target Variable
+    #' @param epochs Integer. Iteration for convergence
+    #' @param progress_callback Function. To view the progress of model training on data.
+    #' @return Nothing. The object is internally updated when using this method.
+    #' @example
+    #'  # model$fit(as.matrix(X_train), y_train)
 
     fit = function(X, y, epochs = self$iterations , progress_callback = NULL) {
       if (!is.matrix(X)) {
@@ -182,6 +252,14 @@ for (batch in batch_indices) {
         close(pb)
     },
 
+    #' @description
+    #' This function calculates the class predicted.
+    #' @param X Matrix. Explanatory variables from the test dataset
+    #' @return Vector. The predicted class for each value of the test dataset.
+    #' 
+    #' @example
+    #' # predictions <- model$predict(X_test)
+
     predict = function(X) {
       if (!is.matrix(X)) {
         X <- as.matrix(X)
@@ -192,6 +270,13 @@ for (batch in batch_indices) {
       self$classes[max_indices]
     },
 
+    #' @description
+    #' This function calculates the probabilites of belonging to each class of the target variable.
+    #' @param X Matrix. Explanatory variables from the test dataset.
+    #' @return Matrix. The probability of belonging to each class.
+    #' 
+    #' @example
+    #' # predictions <- model$predict_proba(X_test)
     predict_proba = function(X) {
       if (!is.matrix(X)) {
         X <- as.matrix(X)
@@ -200,13 +285,25 @@ for (batch in batch_indices) {
       probs <- self$softmax(scores)
       return(probs)
     },
-
+    #' @description
+    #' This function computes the softmax probabilities for a given set of scores.
+    #' @param scores Matrix. Matrix product between weights and the matrix with the explanatory variable.
+    #' @return Matrix. Probabilities where each row  sums to 1.
+    #' @example
+    #' # probs <- softmax(scores)
     softmax = function(scores) {
       exp_scores <- exp(scores - matrixStats::rowMaxs(scores))
       probs <- exp_scores / matrixStats::rowSums2(exp_scores)
       return(probs)
     },
 
+    #' @description
+    #' Calculate loss based on a criterion cross entropy or squared error
+    #' @param probs Matrix. Probabilities calculated with
+    #' Matrix product between weights and the matrix with the explanatory variable.
+    #' @return Matrix. Probabilities where each row  sums to 1.
+    #' @example
+    #' # probs <- softmax(scores)
     compute_loss = function(probs, y_one_hot) {
       if (self$loss_function == "cross_entropy") {
         epsilon_val <- 1e-15
@@ -219,10 +316,21 @@ for (batch in batch_indices) {
       }
     },
 
+    #' @description
+    #' Retrieves the history of loss values recorded during the model's training process. 
+    #' 
+    #' @return Matrix.
+    #' @example
+    #' # model$get_lost_history()
     get_loss_history = function() {
       self$loss_history
     },
 
+    #' @description
+    #' To plot the loss curve
+    #' @return lineplot. Loss variations as a function of iteration. 
+    #' @example
+    #' #  model$plot_loss_history()
     plot_loss_history = function() {
       if (length(self$loss_history) == 0) {
         plot.new()
@@ -234,7 +342,11 @@ for (batch in batch_indices) {
              ylab = "Loss")
       }
     },
-
+    #' @description
+    #' To plot the learning rate by epoch
+    #' @return lineplot. Learning rate by epoch.
+    #' @example
+    #' #  model$plot_loss_history()
     plot_learning_rate_history = function() {
       if (length(self$learning_rate_history) == 0) {
         plot.new()
@@ -247,7 +359,11 @@ for (batch in batch_indices) {
       }
     },
 
-    # Méthode pour afficher l'importance des variables
+    #' @description
+    #' To have the importance of each variable
+    #' @return DataFrame with the importance calculated for each variable.
+    #' @example
+    #' #  model$get_variable_importance()
     get_variable_importance = function() {
       if (is.null(self$weights)) {
         stop("Le modèle n'est pas encore entraîné.")
@@ -258,7 +374,12 @@ for (batch in batch_indices) {
       return(importance_df)
     },
 
-    # Méthode pour sélectionner les n meilleures variables
+    #' @description
+    #' To have the N most important variable in the model
+    #' @param n Integer. Number of the best variable to select
+    #' @return Vector. Names of the n best variable based on their importance.
+    #' @example
+    #' #  model$var_select(5)
     var_select = function(n) {
       importance_df <- self$get_variable_importance()
       top_vars <- importance_df$Variable[1:n]
@@ -269,6 +390,13 @@ for (batch in batch_indices) {
       mean(y_test == y_pred)
     },
 
+    #' @description
+    #' Calculate the confusion matrix between the prediction of the model and the real class.
+    #' @param y_test Factor. The target variable with the real class.
+    #' @param y_pred Factor. The class predicted from the model
+    #' @return Matrix. Display the confusion matrix calculated.
+    #' @example
+    #' #  model$confusion_matrix(y_test, y_pred)
     confusion_matrix = function(y_test, predictions) {
             
         if (!is.factor(y_test)) {
@@ -278,9 +406,14 @@ for (batch in batch_indices) {
         
         predictions <- factor(predictions, levels = levels(y_test))
         confusion_matrix <- confusionMatrix(predictions,y_test)
-        
-        return(confusion_matrix$table)
+        print("Confusion Matrix:")
+        print(confusion_matrix$table)
     },
+    #' @description
+    #' Display all informations parameters about the models
+    #' @return Text. print informations
+    #' @example
+    #' #  model$summary()
     summary = function() {
       cat("Multinomial Logistic Regression Model\n")
       cat("-------------------------------\n")
@@ -304,7 +437,17 @@ for (batch in batch_indices) {
     }
   )
 )
-  
+    #' @description
+    #' To split the dataset with train/test method
+    #' @param data Dataframe with all the data without any modfications.
+    #' @param target_var String or List with the target variable
+    #' @param explanatory_vars Matrix with all the explanatory variable
+    #' @param train_ratio Float. Percentage to be passed in the sample train.
+    #' @param random_stat Integer. Controls the random seed for reproducibility.
+    #' @param shuffle binary. If true, then the samples are constructed with randomness.
+    #' @return List with data separated into trains/tests 
+    #' @example
+    #' # split_data <- split_train_test(data = data, target_var = target_var, explanatory_vars = explanatory_vars, train_ratio = 0.9, random_state = 123, 
 split_train_test <- function(data, target_var, explanatory_vars, train_ratio = 0.8, random_state = NULL, shuffle = TRUE) {
     # Vérifier les entrées
     if (!is.data.frame(data)) {
@@ -357,4 +500,3 @@ split_train_test <- function(data, target_var, explanatory_vars, train_ratio = 0
         y_test = y_test
     ))
 }
-
