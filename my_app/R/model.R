@@ -195,7 +195,7 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
       self$initialization <- initialization
     },
 
-    fit = function(X, y, epochs = self$iterations) {
+    fit = function(X, y, epochs = self$iterations , progress_callback = NULL) {
       if (!is.matrix(X)) {
         stop("`X` doit être une matrice.")
       }
@@ -296,6 +296,10 @@ for (batch in batch_indices) {
         # Calcul de la perte moyenne pour l'époque
         self$loss_history[epoch] <- epoch_loss / total_batches
         self$learning_rate_history[epoch] <- current_lr
+        # Call the progress callback if provided
+        if (!is.null(progress_callback)) {
+          progress_callback(epoch, epochs, self$loss_history[epoch])
+        }
         setTxtProgressBar(pb, epoch)
         }
         close(pb)
@@ -384,16 +388,23 @@ for (batch in batch_indices) {
       return(top_vars)
     },
 
-    confusion_matrix = function(y_test, y_pred) {
+    accuracy = function(y_test, y_pred) {
+      mean(y_test == y_pred)
+    },
+
+
+
+    confusion_matrix = function(y_test, predictions) {
             
         if (!is.factor(y_test)) {
             y_test <- as.factor(y_test)
         }
         # Afficher la matrice de confusion
+        
         predictions <- factor(predictions, levels = levels(y_test))
         confusion_matrix <- confusionMatrix(predictions,y_test)
-        print("Confusion Matrix:")
-        print(confusion_matrix$table)
+        
+        return(confusion_matrix$table)
     },
     summary = function() {
       cat("Multinomial Logistic Regression Model\n")
@@ -408,6 +419,13 @@ for (batch in batch_indices) {
       cat("Warmup Epochs: ", self$warmup_epochs, "\n")
       cat("Initial Learning Rate: ", self$initial_learning_rate, "\n")
       cat("Initialization: ", self$initialization, "\n")
+    },
+    print = function() {
+        cat("Multinomial Logistic Regression Model\n")
+        cat("-------------------------------\n")
+        cat("Learning Rate: ", self$learning_rate, "\n")
+        cat("Iterations: ", self$iterations, "\n")
+        cat("Batch Size: ", self$batch_size, "\n")
     }
   )
 )

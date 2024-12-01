@@ -28,15 +28,14 @@ ui <- dashboardPage(
     sidebarMenu(
       menuItem("Data", tabName = "data", icon = icon("database")),
       menuItem("Preprocessing", tabName = "preprocessing", icon = icon("cogs")),
-      menuItem("Training", tabName = "training", icon = icon("chart-line")),
-      menuItem("Test", tabName = "test", icon = icon("flask"))
+      menuItem("Training", tabName = "training", icon = icon("chart-line"))
     )
   ),
   dashboardBody(
     tabItems(
       tabItem(tabName = "data", module_data_ui("data_ui")), # Module Data
       tabItem(tabName = "preprocessing", module_preprocessing_ui("preprocessing_ui")), # Module Preprocessing
-      tabItem(tabName = "training", module_training_ui("training_ui")), # Module Training
+      tabItem(tabName = "training", module_training_ui("training_ui")) # Module Training
     )
   )
 )
