@@ -1,0 +1,315 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+% Encodage
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Langue
+\usepackage[french]{babel}
+
+% Mise en page
+\usepackage{geometry}
+\geometry{a4paper, margin=2.5cm}
+
+% Gestion des liens
+\usepackage{hyperref}
+
+% Pour les tableaux
+\usepackage{booktabs}
+
+% Pour les images
+\usepackage{graphicx}
+
+% Titre
+\title{Régression Logistique Multinomiale pour R}
+\author{RANDRIAMIARIJAONA Nancy \\GABRYSCH Alexis\\KOCAB Cyril}
+\date{\today}
+
+\begin{document}
+
+
+\maketitle
+Voici un lien vers le dépôt GitHub :  
+\href{https://github.com/Cyr-CK/RegLogMulti}{RegLogMulti}.
+\tableofcontents
+
+\newpage
+
+\section{Introduction}
+
+Le projet \textbf{RegLogMulti} vise à fournir une implémentation efficace de la régression logistique multinomiale en R. En utilisant une technique de descente de gradient, ce package permet de gérer à la fois des variables quantitatives et qualitatives, pour la prédiction d'une variable multi-classes. De plus, une interface utilisateur interactive est fournie via une application Shiny, permettant aux utilisateurs de configurer et d’entraîner le modèle avec les hyper-paramètres choisis.
+
+\section{Structure du Projet}
+
+Le package est organisé de la manière suivante : \\
+
+\begin{itemize}
+
+    \item \textbf{app.R} :Application Shiny, intégrant les différents modules pour la gestion des données, le prétraitement et l'entraînement du modèle.
+    \item \textbf{data/} : Contient les fichiers de données utilisés par le projet, tels que \\\texttt{donnees\_qualitatives\_corrigees.csv} et \texttt{iris\_extended.csv}.
+    \item \textbf{docs/} : Dossier dédié à la documentation, incluant des fichiers LaTeX.
+    \item \textbf{R/} : Regroupe les scripts R organisés en différentes sous-catégories :
+    \begin{itemize}
+        \item \textbf{preprocessing/} : Contient les classes et fonctions pour le prétraitement des données, telles que \texttt{OneHotEncoder.R}, \texttt{StandardScaler.R}, etc.
+        \item \textbf{modules/} : Inclut les modules Shiny pour la gestion des données (\texttt{module\_data.R}), le prétraitement (\texttt{module\_preprocessing.R}) et l'entraînement (\texttt{module\_training.R}).
+        \item \textbf{model.R} : Définit la classe \texttt{MultinomialLogisticRegression} utilisée pour l'entraînement et l'évaluation du modèle.
+    \end{itemize}
+    \item \textbf{README.md} : Fournit une vue d'ensemble du projet, incluant les instructions d'installation et d'utilisation.
+\end{itemize}
+
+\section{Modèle et Classes de Prétraitement}
+
+\subsection{Théorie du Modèle}
+La régression logistique multinomiale est utilisée lorsque la variable cible possède plus de deux classes. Elle repose sur le principe du \textit{softmax}, qui convertit les sorties d’un modèle en probabilités associées à chaque classe.
+
+\subsubsection{Softmax}
+Pour un ensemble de \( K \) classes, la probabilité \( P(y_i = k \mid x_i, W) \) d’appartenir à la classe \( k \) est donnée par :
+\[
+P(y_i = k \mid x_i, W) = \frac{\exp(w_k^\top x_i)}{\sum_{j=1}^K \exp(w_j^\top x_i)},
+\]
+où :
+\begin{itemize}
+    \item \( x_i \) est le vecteur des caractéristiques de l’observation \( i \),
+    \item \( W = [w_1, \dots, w_K] \) représente les coefficients du modèle pour chaque classe.
+\end{itemize}
+Le modèle prédit la classe avec la probabilité la plus élevée.
+
+\subsubsection{Fonction de coût}
+La fonction de coût utilisée est l'entropie croisée catégorielle, exprimée par :
+\[
+J(W) = -\frac{1}{N} \sum_{i=1}^N \sum_{k=1}^K y_{ik} \log P(y_i = k \mid x_i, W),
+\]
+où \( y_{ik} \) est une variable indicatrice valant 1 si \( y_i = k \) et 0 sinon.
+
+\subsubsection{Optimisation par descente de gradient}
+La descente de gradient ajuste les poids \( W \) pour minimiser \( J(W) \). À chaque itération :
+\[
+W \leftarrow W - \eta \frac{\partial J(W)}{\partial W},
+\]
+où \( \eta \) est le taux d’apprentissage.
+
+\subsection{Adam Optimizer}
+L’optimiseur Adam (\textit{Adaptive Moment Estimation}) est utilisé pour accélérer la convergence. Il combine les avantages des méthodes de gradient à taux d'apprentissage adaptatif et de momentum. Les paramètres \( m_t \) (moment) et \( v_t \) (variance) sont mis à jour comme suit :
+\[
+m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t,
+\]
+\[
+v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2,
+\]
+où \( g_t \) est le gradient actuel, et \( \beta_1, \beta_2 \) sont des hyperparamètres.
+
+Les poids sont mis à jour en utilisant :
+\[
+W \leftarrow W - \frac{\eta \, m_t}{\sqrt{v_t} + \epsilon},
+\]
+avec \( \epsilon \) comme valeur de lissage pour éviter les divisions par zéro.
+\subsection{Learning Rate}
+Nous avons instauré la possibilité de choisir le taux d'apprentissage mais aussi son évolution dans le temps. En effet, 
+
+    \item \textbf{Diminution avec décroissance par étape} : 
+    \[
+    \eta_t = \eta_0 \cdot \frac{1}{1 + \lambda t},
+    \]
+    où \( \lambda \) est un hyperparamètre déterminant la vitesse de diminution.
+
+    \subsection{Impact sur l’Entraînement}
+Le choix de \( \eta \), du \textit{LR decay} et du \textit{warm-up} impacte directement :
+\begin{itemize}
+    \item \textbf{La vitesse de convergence} : un bon choix de stratégie peut accélérer l’apprentissage.
+    \item \textbf{La stabilité} : éviter les oscillations ou la divergence.
+    \item \textbf{La généralisation} : un taux mal configuré peut entraîner un surapprentissage ou un sous-apprentissage.
+\end{itemize}
+
+\subsection{Implémentation dans le Package}
+\begin{enumerate}
+    \item \textbf{Initialisation des poids} : Les poids sont initialisés aléatoirement pour toutes les classes.
+    \item \textbf{Prédictions avec Softmax} : Le calcul des probabilités pour chaque classe est effectué et la classe est attribué à la plus grande.
+    \item \textbf{Calcul de la perte} : La fonction de coût est évaluée pour ajuster les poids.
+    \item \textbf{Mise à jour des poids} : Les gradients sont calculés et les poids sont mis à jour à chaque itération et/ou chaque batch.
+\end{enumerate}
+
+
+
+\subsection{Évaluation du Modèle}
+Les performances du modèle sont mesurées à l'aide de métriques telles que :
+\begin{itemize}
+    \item \textbf{La précision} : proportion de prédictions correctes.
+    \item \textbf{La matrice de confusion} : évalue les erreurs entre classes.
+    \item \textbf{Les courbes de perte et de taux d’apprentissage} : montrent la convergence du modèle.
+\end{itemize}
+
+\section{Classes de Prétraitement}
+
+Plusieurs classes R6 sont implémentées pour le prétraitement des données, facilitant la préparation des données avant l'entraînement du modèle :
+
+\begin{itemize}
+    \item \texttt{OneHotEncoder} : Encode les variables qualitatives en utilisant l'encodage One-Hot.
+    \item \texttt{StandardScaler} : Normalise les variables quantitatives en leur appliquant une standardisation.
+    \item \texttt{MinMaxScaler} : Met à l'échelle les variables en les ramenant dans une plage spécifiée.
+    \item \texttt{RobustScaler} : Applique une mise à l'échelle robuste en utilisant des statistiques résilientes aux valeurs aberrantes.
+    \item \texttt{SimpleQualiImputer} et \texttt{SimpleQuantiImputer} : Imputent les valeurs manquantes dans les données qualitatives et quantitatives respectivement.\\
+\end{itemize}
+
+Ces classes sont organisées dans le dossier \texttt{R/preprocessing/} et sont intégrées dans le flux de travail via les modules Shiny correspondants.
+
+\section{Visualisation avec Shiny}
+
+L'application Shiny offre une interface utilisateur interactive permettant de gérer l'ensemble du processus de modélisation, de la sélection des données au prétraitement, puis à l'entraînement et à l'évaluation du modèle. Les principales fonctionnalités incluent :
+
+\begin{itemize}
+    \item \textbf{Gestion des Données} : Importation et visualisation des jeux de données, sélection des variables cibles et explicatives.
+    \item \textbf{Prétraitement} : Application des techniques de prétraitement via des boutons d'action, visualisation des données transformées.
+    \item \textbf{Entraînement du Modèle} : Configuration des paramètres du modèle, lancement de l'entraînement avec une barre de progression, affichage des résultats tels que la précision et la matrice de confusion.
+    \item \textbf{Visualisation des Performances} : Graphiques illustrant la courbe de perte et l'évolution du taux d'apprentissage au cours de l'entraînement.
+\end{itemize}
+
+L'intégration de Shiny permet aux utilisateurs de configurer et d'affiner facilement les modèles sans nécessiter de compétences avancées en programmation.
+
+
+\subsection{Data}
+Cette section est dédiée à la gestion des données et propose plusieurs fonctionnalités clés :
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.75\linewidth]{1.png}
+    \caption{Data management}
+    \label{fig:enter-label}
+\end{figure}
+\begin{itemize}
+    \item \textbf{Importation des données} : Permet de charger des fichiers au format \texttt{.csv} ou \texttt{.xlsx} dans l'application. Une fois le fichier chargé, les données sont affichées sous forme de tableau interactif.
+    \item \textbf{Informations} : Fournit des détails sur les données, y compris les types de variables (qualitatives ou quantitatives), le nombre total d'observations, et le total des valeurs manquantes dans l'ensemble des données.
+    \item \textbf{Missing Data} : Offre une interface pour gérer les valeurs manquantes. Les utilisateurs peuvent ajouter ou imputer des données manquantes, que ce soit pour des variables qualitatives ou quantitatives.
+    \item \textbf{Summary} : Présente un résumé statistique des données, notamment des mesures comme la moyenne, l'écart-type, les minimums et maximums, et les quantiles.
+\end{itemize}
+
+\subsection{Preprocessing}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.75\linewidth]{6.png}
+    \caption{Preprocessing}
+    \label{fig:preprocessing}
+\end{figure}
+
+Cette section est consacrée à la préparation des données avant leur utilisation pour l'entraînement des modèles. Les options disponibles sont :
+\begin{itemize}
+    \item \textbf{One-Hot Encoding} : Applique une transformation pour convertir les variables qualitatives en une représentation numérique, facilitant leur utilisation dans les modèles.
+    \item \textbf{Scalers pour variables quantitatives} : Trois types de normalisations/scalings sont proposés :
+    \begin{itemize}
+        \item \textbf{Standard Scaler} : Standardisation des données pour qu'elles aient une moyenne de 0 et un écart-type de 1.
+        \item \textbf{Min-Max Scaler} : Mise à l'échelle des données dans une plage spécifiée (souvent [0, 1]).
+        \item \textbf{Robust Scaler} : Scaling robuste aux valeurs aberrantes en utilisant les médianes et les quartiles.
+    \end{itemize}
+    \item \textbf{FAMD} : Utilisé pour gérer les variables mixtes (qualitatives et quantitatives) en les intégrant dans une même représentation.
+\end{itemize}
+
+\subsection{Training}
+Cette section permet de configurer et de suivre l'entraînement du modèle d'apprentissage automatique :
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.75\linewidth]{12.png}
+    \caption{Training}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{itemize}
+    \item \textbf{Configuration des hyperparamètres} : Permet de paramétrer le modèle, notamment la méthode d'initialisation des poids, le taux d'apprentissage, la taille des lots (\textit{batch size}), le nombre d'itérations, et le choix de l'optimiseur (ex. : Adam).
+    \item \textbf{Résumé du modèle et progression de l'entraînement} : Affiche un récapitulatif des paramètres du modèle ainsi que la progression de l'entraînement en temps réel.
+    \item \textbf{Loss Curve} : Graphique montrant l'évolution de la fonction de perte au fil des itérations, permettant de vérifier la convergence du modèle.
+    \item \textbf{Learning Rate Visualization} : Permet de visualiser l'évolution du taux d'apprentissage au cours de l'entraînement.
+    \item \textbf{Importance des variables} : Met en évidence l'importance relative des différentes variables dans le modèle final, offrant des indications sur leur impact dans les prédictions.
+\end{itemize}
+
+\noindent Cette interface offre une gestion complète du pipeline de données, allant de leur importation à l'entraînement des modèles, tout en assurant un suivi visuel pour faciliter l'interprétation des résultats.
+
+\section{Comparaison avec \texttt{sklearn}}
+
+
+Cette partie compare l'implémentation d'un modèle de régression logistique multinomiale en R avec Scikit-learn, un framework pour le Machine Learning sous Python. Les aspects évalués incluent : \textit{performances, scalabilité, efficacité, et prétraitement}. Le modèle R est basé sur une classe R6, tandis que Scikit-learn utilise un moteur optimisé pour les calculs matriciels.
+
+\section*{Analyse des performances}
+
+\subsection*{Temps de calcul et efficacité}
+
+\begin{longtable}{|p{5cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Critère} & \textbf{Modèle R} & \textbf{Scikit-learn} \\
+\hline
+Optimisation algébrique & Utilise les bibliothèques \texttt{Matrix} et \texttt{matrixStats}. Bonnes performances sur des données moyennes. & Basé sur \texttt{numpy} et \texttt{scipy}, avec des implémentations optimisées en Cython. \\
+\hline
+Gestion des grandes données & Limité par la RAM, ralentissement notable sur des millions de lignes. & Plus efficace grâce à des optimisations internes. \\
+
+\hline
+Gestion des mini-batches & Implémenté explicitement dans notre modèle. & Géré automatiquement par les algorithmes. \\
+\hline
+Initialisation & Supporte \texttt{xavier} et \texttt{zeros}. & Initialisations automatiques optimisées (ex : \texttt{He initialization}). \\
+\hline
+Temps d'entraînement & Plus lent pour des données volumineuses et des itérations élevées. & Rapide grâce à des optimisations et parallélisation. \\
+\hline
+\end{longtable}
+\\
+
+\subsection*{Temps d'entraînement estimé}
+
+\begin{longtable}{|p{5cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Taille des données} & \textbf{Modèle R} & \textbf{Scikit-learn} \\
+\hline
+Petites données (\textless 10k lignes) & Quelques secondes. & Quelques millisecondes à secondes. \\
+\hline
+Moyennes données (100k lignes) & Quelques minutes. & Quelques secondes. \\
+\hline
+Grandes données (\textgreater 1M lignes) & Limité par la RAM, plusieurs minutes à heures. & Quelques minutes (RAM suffisante). \\
+\hline
+\end{longtable}
+
+\section*{Prétraitement des données}
+L'implémentation inclut un pipeline complet de prétraitement des données (One-Hot Encoding, scaling, AFDM). Scikit-learn propose des pipelines similaires mais optimisés pour les données volumineuses ainsi que pour la parallélisation des calculs.
+
+\subsection*{Comparaison des prétraitements}
+\begin{longtable}{|p{5cm}|p{5cm}|p{5cm}|}
+\hline
+\textbf{Prétraitement} & \textbf{Modèle R} & \textbf{Scikit-learn} \\
+\hline
+One-Hot Encoding & Réalisé via une classe dédiée (\texttt{One.Hot.Encoder}). Bonnes performances. & Géré automatiquement avec \texttt{OneHotEncoder}. Plus rapide. \\
+\hline
+Normalisation / Standardisation & Scalers implémentés (\texttt{Standard}, \texttt{MinMax}, \texttt{Robust}). & Scalers natifs optimisés (ex : \texttt{StandardScaler}). \\
+\hline
+AFDM (Analyse Factorielle de Données Mixtes) & Implémenté pour les variables mixtes via \texttt{FactoMineR}. & Pas directement supporté, nécessite des transformations manuelles ou via d'autres packages. \\
+\hline
+\end{longtable}
+
+\section*{Optimisation et scalabilité}
+
+\subsection*{Modèle R}
+\begin{itemize}
+    \item Optimisation du SGD via Adam.
+    \item Approche par mini-batches par défaut.
+    \item Limité par la RAM et la vitesse d'exécution des boucles R.
+\end{itemize}
+
+\subsection*{Scikit-learn}
+\begin{itemize}
+    \item Intègre des algorithmes optimisés pour des données volumineuses.
+    \item Supporte la parallélisation et l'exécution sur GPU via des bibliothèques tierces.
+\end{itemize}
+
+
+\section{Conclusion}
+L'implémentation en R est robuste et bien adaptée aux jeux de données de taille petite à moyenne. Cependant, Scikit-learn surpasse en termes de performance et d'efficacité pour des données volumineuses grâce à ses optimisations natives. Toutefois, notre modèle R possède l'atout non négligeable de ne pas être une boite noire en son cœur notamment en raison de son caractère paramétrable et modulable. De plus, on peut noter la possibilité de faire varier le taux d'apprentissage, un paramètre crucial lorsque l'on fait du Machine Learning. //
+En somme, il s'agit d'un package permettant de faire de la classification multi-classe par le biais d'une régression logistique multinomiale. Que les variables explicatives soient quantitatives ou qualitatives, de nombreuses fonctions de prétraitements sont applicables afin de préparer les données à la modélisation. La faiblesse de ce package réside donc dans sa difficulté à gérer de grands volumes de données, ce qui pourrait faire l'objet de travaux futurs, mais sa force réside donc dans la diversité des prétraitements possibles ainsi que sa relative autonomie par rapport aux autres packages.
+
+\end{document}
+
+
+\begin{center}
+
+\end{center}
+
+\end{document}
