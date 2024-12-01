@@ -20,8 +20,8 @@ library(caret)
 library(Matrix)
 library(matrixStats) # Charger le package matrixStats pour des opérations optimisées
 
-#' MultinomialLogisticRegression
-#' @description 
+#' Multinomial Logistic Regression
+#' @description
 #' This class is used to perform one-hot encoding on categorical variables in a dataset.
 MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
   public = list(
@@ -37,7 +37,7 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
     learning_rate = 0.01,
     #' @field optimizer String specifying the optimization method (e.g., "adam", "sgd").
     optimizer = "adam",
-    #' @field regularization_strength Numeric value for the strength of the regularization term.
+    #' @field regularization Boolean value telling whether to use the regularization term.
     regularization = NULL,
     #' @field regularization_strength Numeric value for the strength of the regularization term.
     regularization_strength = 0.01,
@@ -72,7 +72,7 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
 
     #' @description
     #' This method initializes a model with all defaults paramaters.
-    #' 
+    #'
     #' @param learning_rate Numeric. The learning rate used for optimization.
     #' @param iterations Integer. The total number of iterations for training.
     #' @param optimizer String. The optimization algorithm to use (e.g., "adam", "sgd").
@@ -88,22 +88,22 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
     #' @param warmup_epochs Integer. The number of warmup epochs during which the learning rate is gradually increased.
     #' @param initial_learning_rate Numeric. The initial learning rate for the warmup phase.
     #' @param initialization String. The method used for initializing weights ("xavier" or "zeros").
-    #' 
+    #'
     #' @return Initializes an instance of the `MultinomialLogisticRegression` class with the specified parameters.
     #' @examples
     #' # Create a new instance of the class
-    #' # model <- MultinomialLogisticRegression$new(learning_rate = 0.001, 
-    #'  #                                            iterations = 100, 
-    #'  #                                            batch_size =4, 
-    #'  #                                            regularization = "L1", 
-    #'  #                                            regularization_strength = 0.01, 
+    #' # model <- MultinomialLogisticRegression$new(learning_rate = 0.001,
+    #'  #                                            iterations = 100,
+    #'  #                                            batch_size =4,
+    #'  #                                            regularization = "L1",
+    #'  #                                            regularization_strength = 0.01,
     #'  #                                            optimizer = "adam",
     #'  #                                            beta1 = 0.9,
     #'  #                                            beta2 = 0.999,
     #'  #                                            epsilon = 1e-8,
-    #'  #                                            lr_decay = TRUE,        
+    #'  #                                            lr_decay = TRUE,
     #'  #                                            decay_rate = 0.01,
-    #'  #                                            warmup_epochs = 10, 
+    #'  #                                            warmup_epochs = 10,
     #'  #                                            initial_learning_rate = 0.0001,
     #'  #                                            initialization = "zeros")
 
@@ -118,12 +118,12 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
       self$optimizer <- optimizer # Optimiseur
       self$regularization <- regularization # Type de régularisation
       self$regularization_strength <- regularization_strength # Force de régularisation
-      self$lr_decay <- lr_decay # Décroissance du taux d'apprentissage  
+      self$lr_decay <- lr_decay # Décroissance du taux d'apprentissage
       self$decay_rate <- decay_rate # Taux de décroissance du taux d'apprentissage
       self$loss_function <- loss_function # Fonction de perte
       self$loss_history <- numeric(iterations)  # Pré-allocation
       self$learning_rate_history <- numeric(iterations)  # Pré-allocation
-      self$batch_size <- batch_size # Taille du mini-batch  
+      self$batch_size <- batch_size # Taille du mini-batch
       self$beta1 <- beta1 # Taux de décroissance du premier moment
       self$beta2 <- beta2 # Taux de décroissance du deuxième moment
       self$epsilon <- epsilon # Valeur epsilon pour éviter la division par zéro
@@ -132,7 +132,7 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
       self$initial_learning_rate <- initial_learning_rate # Taux d'apprentissage initial
       self$initialization <- initialization # Initialisation des poids
     },
-    #' @description 
+    #' @description
     #' This method fits the model to data given.
     #' @param X Matrix. Explanatory variables
     #' @param y Factor. Target Variable
@@ -159,7 +159,7 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
         self$weights <- matrix(0, nrow = n_features, ncol = n_classes)
     } else if (self$initialization == "xavier") {
         limit <- sqrt(6 / (n_features + n_classes))
-        self$weights <- matrix(runif(n_features * n_classes, min = -limit, max = limit), 
+        self$weights <- matrix(runif(n_features * n_classes, min = -limit, max = limit),
                                 nrow = n_features, ncol = n_classes)
     }
 
@@ -185,7 +185,7 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
       for (epoch in 1:epochs) {
         if (is.null(self$batch_size)) {
                     batch_indices <- list(1:n_samples)
-                    
+
         } else {
              shuffled_indices <- sample(1:n_samples)  # Mélanger les indices
             batch_indices <- split(shuffled_indices, ceiling(seq_along(shuffled_indices) / self$batch_size))
@@ -193,7 +193,7 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
    epoch_loss <- 0  # Initialiser la perte cumulative pour l'époque
     total_batches <- length(batch_indices)  # Nombre de mini-batchs dans une époque
     if (self$warmup_epochs > 0 && epoch <= self$warmup_epochs) {
-      current_lr <- self$initial_learning_rate + 
+      current_lr <- self$initial_learning_rate +
                     (self$learning_rate - self$initial_learning_rate) * (epoch / self$warmup_epochs)
     } else {
       current_lr <- self$learning_rate
@@ -214,7 +214,7 @@ for (batch in batch_indices) {
 
     # Mise à jour des poids via le gradient
     gradient <- t(X_batch) %*% (probs - y_batch) / length(batch)
-    
+
     # Ajouter la régularisation si nécessaire
     if (!is.null(self$regularization)) {
         if (self$regularization == "L2") {
@@ -223,7 +223,7 @@ for (batch in batch_indices) {
             gradient <- gradient + self$regularization_strength * sign(self$weights)
         }
     }
-    
+
     # Mise à jour des poids selon l'optimiseur
     if (self$optimizer == "adam") {
         self$t <- self$t + 1
@@ -256,7 +256,7 @@ for (batch in batch_indices) {
     #' This function calculates the class predicted.
     #' @param X Matrix. Explanatory variables from the test dataset
     #' @return Vector. The predicted class for each value of the test dataset.
-    #' 
+    #'
     #' @examples
     #' # predictions <- model$predict(X_test)
 
@@ -274,7 +274,7 @@ for (batch in batch_indices) {
     #' This function calculates the probabilites of belonging to each class of the target variable.
     #' @param X Matrix. Explanatory variables from the test dataset.
     #' @return Matrix. The probability of belonging to each class.
-    #' 
+    #'
     #' @examples
     #' # predictions <- model$predict_proba(X_test)
     predict_proba = function(X) {
@@ -327,7 +327,7 @@ for (batch in batch_indices) {
 
     #' @description
     #' To plot the loss curve
-    #' @return lineplot. Loss variations as a function of iteration. 
+    #' @return lineplot. Loss variations as a function of iteration.
     #' @examples
     #' #  model$plot_loss_history()
     plot_loss_history = function() {
@@ -400,17 +400,17 @@ for (batch in batch_indices) {
     #' @description
     #' Calculate the confusion matrix between the prediction of the model and the real class.
     #' @param y_test Factor. The target variable with the real class.
-    #' @param y_pred Factor. The class predicted from the model
+    #' @param predictions Factor. The class predicted from the model.
     #' @return Matrix. Display the confusion matrix calculated.
     #' @examples
-    #' #  model$confusion_matrix(y_test, y_pred)
+    #' model$confusion_matrix(y_test, y_pred)
     confusion_matrix = function(y_test, predictions) {
-            
+
         if (!is.factor(y_test)) {
             y_test <- as.factor(y_test)
         }
         # Afficher la matrice de confusion
-        
+
         predictions <- factor(predictions, levels = levels(y_test))
         confusion_matrix <- confusionMatrix(predictions,y_test)
         print("Confusion Matrix:")
@@ -449,6 +449,7 @@ for (batch in batch_indices) {
     }
   )
 )
+    #' @title Split train-test
     #' @description
     #' To split the dataset with train/test method
     #' @param data Dataframe with all the data without any modfications.
@@ -457,9 +458,9 @@ for (batch in batch_indices) {
     #' @param train_ratio Float. Percentage to be passed in the sample train.
     #' @param random_stat Integer. Controls the random seed for reproducibility.
     #' @param shuffle binary. If true, then the samples are constructed with randomness.
-    #' @return List with data separated into trains/tests 
+    #' @return List with data separated into trains/tests
     #' @examples
-    #' # split_data <- split_train_test(data = data, target_var = target_var, explanatory_vars = explanatory_vars, train_ratio = 0.9, random_state = 123, 
+    #' split_data <- split_train_test(data = data, target_var = target_var, explanatory_vars = explanatory_vars, train_ratio = 0.9, random_state = 123,
 split_train_test <- function(data, target_var, explanatory_vars, train_ratio = 0.8, random_state = NULL, shuffle = TRUE) {
     # Vérifier les entrées
     if (!is.data.frame(data)) {
@@ -477,12 +478,12 @@ split_train_test <- function(data, target_var, explanatory_vars, train_ratio = 0
     if (!is.logical(shuffle)) {
         stop("`shuffle` doit être une valeur logique (TRUE ou FALSE).")
     }
-    
+
     # Définir la graine aléatoire si spécifiée
     if (!is.null(random_state)) {
         set.seed(random_state)
     }
-    
+
     if (shuffle) {
         # Mélanger les indices des lignes si shuffle est TRUE
         shuffled_indices <- sample(nrow(data))
@@ -490,20 +491,20 @@ split_train_test <- function(data, target_var, explanatory_vars, train_ratio = 0
         # Utiliser les indices dans l'ordre original si shuffle est FALSE
         shuffled_indices <- 1:nrow(data)
     }
-    
+
     # Calculer le nombre d'échantillons d'entraînement
     train_size <- floor(train_ratio * nrow(data))
-    
+
     # Séparer les indices en ensembles d'entraînement et de test
     train_indices <- shuffled_indices[1:train_size]
     test_indices <- shuffled_indices[(train_size + 1):nrow(data)]
-    
+
     # Créer les ensembles d'entraînement et de test
     X_train <- data[train_indices, explanatory_vars, drop = FALSE]
     X_test <- data[test_indices, explanatory_vars, drop = FALSE]
     y_train <- data[train_indices, target_var]
     y_test <- data[test_indices, target_var]
-    
+
     # Retourner les ensembles divisés
     return(list(
         X_train = X_train,

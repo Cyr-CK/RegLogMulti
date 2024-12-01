@@ -3,7 +3,6 @@
 #' @description
 #' Class of a One-Hot Encoder (OHE) object that has fit, fit_transform and transform methods to use over the qualitative features you want to encode.
 #'
-# #' @details#'
 #'
 #' @import R6
 #' @export
@@ -26,6 +25,7 @@ One.Hot.Encoder <- R6::R6Class("One.Hot.Encoder",
                                  #' @description
                                  #' This method initializes a one-hot encoder (OHE) object by setting up the necessary internal parameters.
                                  #' It is automatically called when a new object of this class is created.
+                                 #' @param drop.last Boolean telling whether last modality of each qualitative features is removed for multicolinearity prevention.
                                  #' @return A new OHE model object.
                                  #' @examples
                                  #' # Creates a new instance of the class
