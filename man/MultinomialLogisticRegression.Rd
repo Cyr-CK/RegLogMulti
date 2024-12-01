@@ -13,86 +13,86 @@ This class is used to perform one-hot encoding on categorical variables in a dat
 ## ------------------------------------------------
 
 # Create a new instance of the class
-# model <- MultinomialLogisticRegression$new(learning_rate = 0.001,
- #                                            iterations = 100,
- #                                            batch_size =4,
- #                                            regularization = "L1",
- #                                            regularization_strength = 0.01,
- #                                            optimizer = "adam",
- #                                            beta1 = 0.9,
- #                                            beta2 = 0.999,
- #                                            epsilon = 1e-8,
- #                                            lr_decay = TRUE,
- #                                            decay_rate = 0.01,
- #                                            warmup_epochs = 10,
- #                                            initial_learning_rate = 0.0001,
- #                                            initialization = "zeros")
+ model <- MultinomialLogisticRegression$new(learning_rate = 0.001,
+                                             iterations = 100,
+                                              batch_size =4,
+                                              regularization = "L1",
+                                              regularization_strength = 0.01,
+                                              optimizer = "adam",
+                                              beta1 = 0.9,
+                                              beta2 = 0.999,
+                                              epsilon = 1e-8,
+                                              lr_decay = TRUE,
+                                              decay_rate = 0.01,
+                                              warmup_epochs = 10,
+                                              initial_learning_rate = 0.0001,
+                                              initialization = "zeros")
 
 ## ------------------------------------------------
 ## Method `MultinomialLogisticRegression$fit`
 ## ------------------------------------------------
 
- # model$fit(as.matrix(X_train), y_train)
+model$fit(as.matrix(X_train), y_train)
 
 ## ------------------------------------------------
 ## Method `MultinomialLogisticRegression$predict`
 ## ------------------------------------------------
 
-# predictions <- model$predict(X_test)
+predictions <- model$predict(X_test)
 
 ## ------------------------------------------------
 ## Method `MultinomialLogisticRegression$predict_proba`
 ## ------------------------------------------------
 
-# predictions <- model$predict_proba(X_test)
+predictions <- model$predict_proba(X_test)
 
 ## ------------------------------------------------
 ## Method `MultinomialLogisticRegression$softmax`
 ## ------------------------------------------------
 
-# probs <- softmax(scores)
+probs <- softmax(scores)
 
 ## ------------------------------------------------
 ## Method `MultinomialLogisticRegression$compute_loss`
 ## ------------------------------------------------
 
-# loss <- compute_loss(probs, y_one_hot)
+loss <- compute_loss(probs, y_one_hot)
 
 ## ------------------------------------------------
 ## Method `MultinomialLogisticRegression$get_loss_history`
 ## ------------------------------------------------
 
-# loss_history <- model$get_loss_history()
+loss_history <- model$get_loss_history()
 
 ## ------------------------------------------------
 ## Method `MultinomialLogisticRegression$plot_loss_history`
 ## ------------------------------------------------
 
-#  model$plot_loss_history()
+model$plot_loss_history()
 
 ## ------------------------------------------------
 ## Method `MultinomialLogisticRegression$plot_learning_rate_history`
 ## ------------------------------------------------
 
-#  model$plot_learning_rate_history()
+model$plot_learning_rate_history()
 
 ## ------------------------------------------------
 ## Method `MultinomialLogisticRegression$get_variable_importance`
 ## ------------------------------------------------
 
-#  model$get_variable_importance()
+model$get_variable_importance()
 
 ## ------------------------------------------------
 ## Method `MultinomialLogisticRegression$var_select`
 ## ------------------------------------------------
 
-#  model$var_select(5)
+model$var_select(5)
 
 ## ------------------------------------------------
 ## Method `MultinomialLogisticRegression$accuracy`
 ## ------------------------------------------------
 
-#  model$accuracy(y_test, y_pred)
+model$accuracy(y_test, y_pred)
 
 ## ------------------------------------------------
 ## Method `MultinomialLogisticRegression$confusion_matrix`
@@ -104,13 +104,13 @@ model$confusion_matrix(y_test, y_pred)
 ## Method `MultinomialLogisticRegression$summary`
 ## ------------------------------------------------
 
-#  model$summary()
+model$summary()
 
 ## ------------------------------------------------
 ## Method `MultinomialLogisticRegression$print`
 ## ------------------------------------------------
 
-#  model$print()
+model$print()
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -248,20 +248,20 @@ Initializes an instance of the \code{MultinomialLogisticRegression} class with t
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
 \preformatted{# Create a new instance of the class
-# model <- MultinomialLogisticRegression$new(learning_rate = 0.001,
- #                                            iterations = 100,
- #                                            batch_size =4,
- #                                            regularization = "L1",
- #                                            regularization_strength = 0.01,
- #                                            optimizer = "adam",
- #                                            beta1 = 0.9,
- #                                            beta2 = 0.999,
- #                                            epsilon = 1e-8,
- #                                            lr_decay = TRUE,
- #                                            decay_rate = 0.01,
- #                                            warmup_epochs = 10,
- #                                            initial_learning_rate = 0.0001,
- #                                            initialization = "zeros")
+ model <- MultinomialLogisticRegression$new(learning_rate = 0.001,
+                                             iterations = 100,
+                                              batch_size =4,
+                                              regularization = "L1",
+                                              regularization_strength = 0.01,
+                                              optimizer = "adam",
+                                              beta1 = 0.9,
+                                              beta2 = 0.999,
+                                              epsilon = 1e-8,
+                                              lr_decay = TRUE,
+                                              decay_rate = 0.01,
+                                              warmup_epochs = 10,
+                                              initial_learning_rate = 0.0001,
+                                              initialization = "zeros")
 }
 \if{html}{\out{</div>}}
 
@@ -300,7 +300,7 @@ Nothing. The object is internally updated when using this method.
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{ # model$fit(as.matrix(X_train), y_train)
+\preformatted{model$fit(as.matrix(X_train), y_train)
 }
 \if{html}{\out{</div>}}
 
@@ -328,7 +328,7 @@ Vector. The predicted class for each value of the test dataset.
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{# predictions <- model$predict(X_test)
+\preformatted{predictions <- model$predict(X_test)
 }
 \if{html}{\out{</div>}}
 
@@ -356,7 +356,7 @@ Matrix. The probability of belonging to each class.
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{# predictions <- model$predict_proba(X_test)
+\preformatted{predictions <- model$predict_proba(X_test)
 }
 \if{html}{\out{</div>}}
 
@@ -384,7 +384,7 @@ Matrix. Probabilities where each row  sums to 1.
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{# probs <- softmax(scores)
+\preformatted{probs <- softmax(scores)
 }
 \if{html}{\out{</div>}}
 
@@ -414,7 +414,7 @@ Float. The loss value calculated based on the probabilities and target values.
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{# loss <- compute_loss(probs, y_one_hot)
+\preformatted{loss <- compute_loss(probs, y_one_hot)
 }
 \if{html}{\out{</div>}}
 
@@ -435,7 +435,7 @@ Numeric vector. Loss values over iterations during training.
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{# loss_history <- model$get_loss_history()
+\preformatted{loss_history <- model$get_loss_history()
 }
 \if{html}{\out{</div>}}
 
@@ -456,7 +456,7 @@ lineplot. Loss variations as a function of iteration.
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{#  model$plot_loss_history()
+\preformatted{model$plot_loss_history()
 }
 \if{html}{\out{</div>}}
 
@@ -477,7 +477,7 @@ lineplot. Learning rate by epoch.
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{#  model$plot_learning_rate_history()
+\preformatted{model$plot_learning_rate_history()
 }
 \if{html}{\out{</div>}}
 
@@ -498,7 +498,7 @@ DataFrame with the importance calculated for each variable.
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{#  model$get_variable_importance()
+\preformatted{model$get_variable_importance()
 }
 \if{html}{\out{</div>}}
 
@@ -526,7 +526,7 @@ Vector. Names of the n best variable based on their importance.
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{#  model$var_select(5)
+\preformatted{model$var_select(5)
 }
 \if{html}{\out{</div>}}
 
@@ -556,7 +556,7 @@ Float. The accuracy of the model.
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{#  model$accuracy(y_test, y_pred)
+\preformatted{model$accuracy(y_test, y_pred)
 }
 \if{html}{\out{</div>}}
 
@@ -607,7 +607,7 @@ Text. print informations
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{#  model$summary()
+\preformatted{model$summary()
 }
 \if{html}{\out{</div>}}
 
@@ -628,7 +628,7 @@ Text. print informations
 }
 \subsection{Examples}{
 \if{html}{\out{<div class="r example copy">}}
-\preformatted{#  model$print()
+\preformatted{model$print()
 }
 \if{html}{\out{</div>}}
 

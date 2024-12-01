@@ -92,20 +92,20 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
     #' @return Initializes an instance of the `MultinomialLogisticRegression` class with the specified parameters.
     #' @examples
     #' # Create a new instance of the class
-    #' # model <- MultinomialLogisticRegression$new(learning_rate = 0.001,
-    #'  #                                            iterations = 100,
-    #'  #                                            batch_size =4,
-    #'  #                                            regularization = "L1",
-    #'  #                                            regularization_strength = 0.01,
-    #'  #                                            optimizer = "adam",
-    #'  #                                            beta1 = 0.9,
-    #'  #                                            beta2 = 0.999,
-    #'  #                                            epsilon = 1e-8,
-    #'  #                                            lr_decay = TRUE,
-    #'  #                                            decay_rate = 0.01,
-    #'  #                                            warmup_epochs = 10,
-    #'  #                                            initial_learning_rate = 0.0001,
-    #'  #                                            initialization = "zeros")
+    #'  model <- MultinomialLogisticRegression$new(learning_rate = 0.001,
+    #'                                              iterations = 100,
+    #'                                               batch_size =4,
+    #'                                               regularization = "L1",
+    #'                                               regularization_strength = 0.01,
+    #'                                               optimizer = "adam",
+    #'                                               beta1 = 0.9,
+    #'                                               beta2 = 0.999,
+    #'                                               epsilon = 1e-8,
+    #'                                               lr_decay = TRUE,
+    #'                                               decay_rate = 0.01,
+    #'                                               warmup_epochs = 10,
+    #'                                               initial_learning_rate = 0.0001,
+    #'                                               initialization = "zeros")
 
     initialize = function(learning_rate = 0.01, iterations = 100, optimizer = "adam",
                           regularization = NULL, regularization_strength = 0.01,
@@ -140,7 +140,7 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
     #' @param progress_callback Function. To view the progress of model training on data.
     #' @return Nothing. The object is internally updated when using this method.
     #' @examples
-    #'  # model$fit(as.matrix(X_train), y_train)
+    #' model$fit(as.matrix(X_train), y_train)
 
     fit = function(X, y, epochs = self$iterations , progress_callback = NULL) {
       if (!is.matrix(X)) {
@@ -258,7 +258,7 @@ for (batch in batch_indices) {
     #' @return Vector. The predicted class for each value of the test dataset.
     #'
     #' @examples
-    #' # predictions <- model$predict(X_test)
+    #' predictions <- model$predict(X_test)
 
     predict = function(X) {
       if (!is.matrix(X)) {
@@ -276,7 +276,7 @@ for (batch in batch_indices) {
     #' @return Matrix. The probability of belonging to each class.
     #'
     #' @examples
-    #' # predictions <- model$predict_proba(X_test)
+    #' predictions <- model$predict_proba(X_test)
     predict_proba = function(X) {
       if (!is.matrix(X)) {
         X <- as.matrix(X)
@@ -290,7 +290,7 @@ for (batch in batch_indices) {
     #' @param scores Matrix. Matrix product between weights and the matrix with the explanatory variable.
     #' @return Matrix. Probabilities where each row  sums to 1.
     #' @examples
-    #' # probs <- softmax(scores)
+    #' probs <- softmax(scores)
     softmax = function(scores) {
       exp_scores <- exp(scores - matrixStats::rowMaxs(scores))
       probs <- exp_scores / matrixStats::rowSums2(exp_scores)
@@ -303,7 +303,7 @@ for (batch in batch_indices) {
     #' @param y_one_hot Matrix. One-hot encoded target values.
     #' @return Float. The loss value calculated based on the probabilities and target values.
     #' @examples
-    #' # loss <- compute_loss(probs, y_one_hot)
+    #' loss <- compute_loss(probs, y_one_hot)
     compute_loss = function(probs, y_one_hot) {
       if (self$loss_function == "cross_entropy") {
         epsilon_val <- 1e-15
@@ -320,7 +320,7 @@ for (batch in batch_indices) {
     #' This function returns the loss history of the model during training.
     #' @return Numeric vector. Loss values over iterations during training.
     #' @examples
-    #' # loss_history <- model$get_loss_history()
+    #' loss_history <- model$get_loss_history()
     get_loss_history = function() {
       self$loss_history
     },
@@ -329,7 +329,7 @@ for (batch in batch_indices) {
     #' To plot the loss curve
     #' @return lineplot. Loss variations as a function of iteration.
     #' @examples
-    #' #  model$plot_loss_history()
+    #' model$plot_loss_history()
     plot_loss_history = function() {
       if (length(self$loss_history) == 0) {
         plot.new()
@@ -345,7 +345,7 @@ for (batch in batch_indices) {
     #' To plot the learning rate by epoch
     #' @return lineplot. Learning rate by epoch.
     #' @examples
-    #' #  model$plot_learning_rate_history()
+    #' model$plot_learning_rate_history()
     plot_learning_rate_history = function() {
       if (length(self$learning_rate_history) == 0) {
         plot.new()
@@ -362,7 +362,7 @@ for (batch in batch_indices) {
     #' To have the importance of each variable
     #' @return DataFrame with the importance calculated for each variable.
     #' @examples
-    #' #  model$get_variable_importance()
+    #' model$get_variable_importance()
     get_variable_importance = function() {
       if (is.null(self$weights)) {
         stop("Le modèle n'est pas encore entraîné.")
@@ -378,7 +378,7 @@ for (batch in batch_indices) {
     #' @param n Integer. Number of the best variable to select
     #' @return Vector. Names of the n best variable based on their importance.
     #' @examples
-    #' #  model$var_select(5)
+    #' model$var_select(5)
     var_select = function(n) {
       importance_df <- self$get_variable_importance()
       top_vars <- importance_df$Variable[1:n]
@@ -391,7 +391,7 @@ for (batch in batch_indices) {
     #' @param y_pred Factor. The class predicted from the model
     #' @return Float. The accuracy of the model.
     #' @examples
-    #' #  model$accuracy(y_test, y_pred)
+    #' model$accuracy(y_test, y_pred)
 
     accuracy = function(y_test, y_pred) {
       mean(y_test == y_pred)
@@ -420,7 +420,7 @@ for (batch in batch_indices) {
     #' Display all informations parameters about the models
     #' @return Text. print informations
     #' @examples
-    #' #  model$summary()
+    #' model$summary()
     summary = function() {
       cat("Multinomial Logistic Regression Model\n")
       cat("-------------------------------\n")
@@ -439,7 +439,7 @@ for (batch in batch_indices) {
     #' display a small summary of the model
     #' @return Text. print informations
     #' @examples
-    #' #  model$print()
+    #' model$print()
     print = function() {
         cat("Multinomial Logistic Regression Model\n")
         cat("-------------------------------\n")
