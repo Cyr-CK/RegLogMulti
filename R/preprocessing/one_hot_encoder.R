@@ -47,6 +47,9 @@ One.Hot.Encoder <- R6::R6Class("One.Hot.Encoder",
                                      stop("`data` must be a dataframe. See as.data.frame()")
                                    }
                                    quali <- data[!sapply(data, is.numeric)]
+                                   if (ncol(quali) == 0){
+                                     stop("No qualitative features in your dataset")
+                                   }
                                    for (col in names(quali)) {
                                      self$categories[[col]] <- unique(quali[[col]])
                                    }
@@ -65,6 +68,9 @@ One.Hot.Encoder <- R6::R6Class("One.Hot.Encoder",
                                  transform = function(data) {
                                    if (is.null(self$categories)){
                                      stop("Fit() method must be used before transform()")
+                                   }
+                                   if (!is.data.frame(data)){
+                                     stop("`data` must be a dataframe. See as.data.frame()")
                                    }
                                    result <- data.frame(row.names = 1:nrow(data))
                                    for (col in names(data)) {
@@ -101,4 +107,3 @@ One.Hot.Encoder <- R6::R6Class("One.Hot.Encoder",
 
                                )
 )
-
