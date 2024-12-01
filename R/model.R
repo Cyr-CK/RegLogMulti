@@ -23,7 +23,6 @@ library(matrixStats) # Charger le package matrixStats pour des opérations optim
 #' MultinomialLogisticRegression
 #' @description 
 #' This class is used to perform one-hot encoding on categorical variables in a dataset.
-#' 
 MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
   public = list(
     #' @field weights Matrix of weights used by the model for prediction.
@@ -91,9 +90,9 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
     #' @param initialization String. The method used for initializing weights ("xavier" or "zeros").
     #' 
     #' @return Initializes an instance of the `MultinomialLogisticRegression` class with the specified parameters.
-    #' @exampless
+    #' @examples
     #' # Create a new instance of the class
-    #' model <- MultinomialLogisticRegression$new(learning_rate = 0.001, 
+    #' # model <- MultinomialLogisticRegression$new(learning_rate = 0.001, 
     #'  #                                            iterations = 100, 
     #'  #                                            batch_size =4, 
     #'  #                                            regularization = "L1", 
@@ -140,7 +139,7 @@ MultinomialLogisticRegression <- R6::R6Class("MultinomialLogisticRegression",
     #' @param epochs Integer. Iteration for convergence
     #' @param progress_callback Function. To view the progress of model training on data.
     #' @return Nothing. The object is internally updated when using this method.
-    #' @exampless
+    #' @examples
     #'  # model$fit(as.matrix(X_train), y_train)
 
     fit = function(X, y, epochs = self$iterations , progress_callback = NULL) {
@@ -258,7 +257,7 @@ for (batch in batch_indices) {
     #' @param X Matrix. Explanatory variables from the test dataset
     #' @return Vector. The predicted class for each value of the test dataset.
     #' 
-    #' @exampless
+    #' @examples
     #' # predictions <- model$predict(X_test)
 
     predict = function(X) {
@@ -346,7 +345,7 @@ for (batch in batch_indices) {
     #' To plot the learning rate by epoch
     #' @return lineplot. Learning rate by epoch.
     #' @examples
-    #' #  model$plot_loss_history()
+    #' #  model$plot_learning_rate_history()
     plot_learning_rate_history = function() {
       if (length(self$learning_rate_history) == 0) {
         plot.new()
