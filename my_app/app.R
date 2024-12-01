@@ -12,7 +12,6 @@ library(magrittr)
 source("R/module_data.R")
 source("R/module_preprocessing.R")
 source("R/module_training.R")
-source("R/module_test.R")
 source("R/preprocessing/FAMD_.R")
 source("R/preprocessing/one_hot_encoder.R")
 source("R/preprocessing/standard_scaler.R")
@@ -38,7 +37,6 @@ ui <- dashboardPage(
       tabItem(tabName = "data", module_data_ui("data_ui")), # Module Data
       tabItem(tabName = "preprocessing", module_preprocessing_ui("preprocessing_ui")), # Module Preprocessing
       tabItem(tabName = "training", module_training_ui("training_ui")), # Module Training
-      tabItem(tabName = "test", module_test_ui("test_ui")) # Module Test
     )
   )
 )
@@ -56,8 +54,7 @@ server <- function(input, output, session) {
     target_variable = data_output$target_variable, 
     explanatory_variables = preprocessing_output$explanatory_variables
   )
-  
-  module_test_server("test_ui")  # Test module
+
 }
 
 
