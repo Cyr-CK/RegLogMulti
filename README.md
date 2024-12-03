@@ -34,7 +34,7 @@ To install and set up the package:
 
    ```bash
    devtools::install_github("Cyr-CK/RegLogMulti", force = TRUE)
-
+```
 
 ## Features
 
