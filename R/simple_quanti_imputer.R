@@ -97,7 +97,7 @@ Simple.Quanti.Imputer <- R6::R6Class("Simple.Quanti.Imputer",
                                    #' # Fitting and imputing missing values on a given dataset
                                    #' X_train_filled <- imputer$fit_transform(X_train)
                                    fit_transform = function(data) {
-                                     self$fit(data, columns)
+                                     self$fit(data)
                                      return(self$transform(data))
                                    }
                                  )

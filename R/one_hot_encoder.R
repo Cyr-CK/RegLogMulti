@@ -82,8 +82,6 @@ One.Hot.Encoder <- R6::R6Class("One.Hot.Encoder",
                                        } else{
                                          result <- cbind(result, encoded)
                                        }
-                                     } else {
-                                       result <- cbind(result, data[[col]])
                                      }
                                    }
                                    quanti <- data[sapply(data, is.numeric)]
